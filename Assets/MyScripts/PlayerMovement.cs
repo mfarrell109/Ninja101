@@ -125,18 +125,21 @@ public class PlayerMovement : MonoBehaviour
             death = true;
 
         }
+
+        /* If player is dead, wait for 5 seconds for animation and then destroy player object */
         if (isDead)
         {
             yield return new WaitForSeconds(5);
             myRigidBody.gameObject.active = false;
         }
         
-
+        /* Reset the level if player dies and still has more lives */
         if (livesCounter > 0)
         {
             Application.LoadLevel(Application.loadedLevel);
         }
 
+        /* If player dies and has not lives. Go back to main menu */
         if (livesCounter <= 0)
         {
             Application.LoadLevel("GameMenu 1");
@@ -173,6 +176,8 @@ public class PlayerMovement : MonoBehaviour
             
         }
 
+        /* This relates to actions to take for when begining door is open of each level.
+           Keep player movement to 0 and once open door. Then player can move */
         if (doorOpen == true)
         {
             moveH = 0;
@@ -270,10 +275,9 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-
-
     void OnTriggerEnter2D(Collider2D collider)
     {
+        /* Collider used for collecting coins */
         if (collider.gameObject.CompareTag("Coins"))
         {
             CollectCoin(collider);
@@ -281,11 +285,13 @@ public class PlayerMovement : MonoBehaviour
             coinAudio.PlayOneShot(clip3,1f);
         }
         
+        /* Collider happens when player dies */
         if (collider.gameObject.CompareTag("Death"))
         {
             print("Collider death");
         }
 
+        /* Collider happens when player collides with endDoor */
         if (collider.gameObject.CompareTag("EndDoor"))
         {
             doorOpen = true;
