@@ -19,8 +19,9 @@ public class PlatformMovement : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        float perCovered = Mathf.Abs((Mathf.Sin(Time.time) * 0.5f) + 0.5f);
-        transform.position = Vector3.Lerp(start, end, perCovered);
+        float wavePos = Mathf.Sin(Time.time * speed); // movement based on a sine wave modulated by time and accelerated by speed
+        float wavePosOffset = (wavePos * 0.5f) + 0.5f; // scale the wave in half to modulate between 0.5 and -0.5, then move the waveform up to modulate between 0 and 1
+        transform.position = Vector3.Lerp(start, end, wavePosOffset);
 	}
 
     void OnDrawGizmosSelected () {
