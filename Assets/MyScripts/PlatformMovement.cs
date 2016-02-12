@@ -20,16 +20,12 @@ public class PlatformMovement : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         float perCovered = Mathf.Abs((Mathf.Sin(Time.time) * 0.5f) + 0.5f);
-
-        // apply
         transform.position = Vector3.Lerp(start, end, perCovered);
 	}
 
     void OnDrawGizmosSelected () {
         Gizmos.color = Color.gray;
-
         setupTrack();
-
         Gizmos.DrawLine(start, end);
     }
 
