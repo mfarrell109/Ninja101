@@ -174,8 +174,13 @@ PlayerSettings:
     m_Icons:
     - serializedVersion: 2
       m_Icon: {fileID: 2800000, guid: 6ab6356a889360e45b4bc30cc82e98a4, type: 3}
+<<<<<<< HEAD
       m_Width: 128
       m_Height: 128
+=======
+      m_Width: 0
+      m_Height: 0
+>>>>>>> no message
   m_BuildTargetBatching: []
   m_BuildTargetGraphicsAPIs: []
   webPlayerTemplate: APPLICATION:Default
@@ -428,6 +433,13 @@ PlayerSettings:
   - Android::ScriptingBackend
   - Metro::ScriptingBackend
   - Standalone::ScriptingBackend
+<<<<<<< HEAD
+=======
+  - WebGL::ScriptingBackend
+  - WebGL::audioCompressionFormat
+  - WebGL::exceptionSupport
+  - WebGL::memorySize
+>>>>>>> no message
   - WebPlayer::ScriptingBackend
   - iOS::Architecture
   - iOS::EnableIncrementalBuildSupportForIl2cpp
@@ -435,14 +447,39 @@ PlayerSettings:
   Android::ScriptingBackend: 0
   Metro::ScriptingBackend: 2
   Standalone::ScriptingBackend: 0
+<<<<<<< HEAD
+=======
+  WebGL::ScriptingBackend: 1
+  WebGL::audioCompressionFormat: 4
+  WebGL::exceptionSupport: 1
+  WebGL::memorySize: 256
+>>>>>>> no message
   WebPlayer::ScriptingBackend: 0
   iOS::Architecture: 2
   iOS::EnableIncrementalBuildSupportForIl2cpp: 1
   iOS::ScriptingBackend: 1
   boolPropertyNames:
+<<<<<<< HEAD
   - XboxOne::enus
   XboxOne::enus: 1
   stringPropertyNames: []
+=======
+  - WebGL::analyzeBuildSize
+  - WebGL::dataCaching
+  - WebGL::useEmbeddedResources
+  - XboxOne::enus
+  WebGL::analyzeBuildSize: 0
+  WebGL::dataCaching: 0
+  WebGL::useEmbeddedResources: 0
+  XboxOne::enus: 1
+  stringPropertyNames:
+  - WebGL::emscriptenArgs
+  - WebGL::template
+  - additionalIl2CppArgs::additionalIl2CppArgs
+  WebGL::emscriptenArgs: 
+  WebGL::template: APPLICATION:Default
+  additionalIl2CppArgs::additionalIl2CppArgs: 
+>>>>>>> no message
   cloudProjectId: 
   projectName: 
   organizationId: 
