@@ -10,11 +10,13 @@ public class TrackMovement : MonoBehaviour {
     private Vector3 end = new Vector3();
     private float moveDistance;
     private Vector3 lastTrackPos = new Vector3();
+    private bool gameStarted = false;
 
 
     // Use this for initialization
     void Start () 
     {
+        gameStarted = true;
         SetupTrack();
         moveDistance = Vector3.Distance(start, end);
 	}
@@ -31,7 +33,10 @@ public class TrackMovement : MonoBehaviour {
     void OnDrawGizmosSelected () 
     {
         Gizmos.color = Color.gray;
-        SetupTrack();
+        if (!gameStarted) 
+        {
+            SetupTrack();
+        }
         Gizmos.DrawLine(start, end);
     }
 
