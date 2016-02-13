@@ -8,14 +8,16 @@ public class SawbladeBehavior : MonoBehaviour {
     private TrackMovement trackScript;
 
     // Use this for initialization
-    void Start () {
+    void Start () 
+    {
         trackScript = GetComponent<TrackMovement>();
         player = GameObject.FindGameObjectWithTag("Player");
     }
 	
 	// Update is called once per frame
-	void Update () {
-        float axisDelta = getAxisDelta(trackScript.getLastMoveDelta());
+	void Update () 
+    {
+        float axisDelta = GetAxisDelta(trackScript.GetLastMoveDelta());
 
         /* if anyone can find a better way to do this, feel free. This is speed bound by
         * time as well as how fast the blade is moving on the track.
@@ -25,7 +27,8 @@ public class SawbladeBehavior : MonoBehaviour {
         transform.Rotate(0.0f, 0.0f, dps);
 	}
 
-    float getAxisDelta (Vector3 moveDelta) {
+    float GetAxisDelta (Vector3 moveDelta) 
+    {
         if (moveDelta.x != 0.0f) {
             return moveDelta.x;
         }
