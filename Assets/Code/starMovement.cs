@@ -5,8 +5,8 @@ public class starMovement : MonoBehaviour
 {
     private AudioSource audio;
     private AudioSource audio2;
-    AudioClip myaudioClip;
-    AudioClip myaudioClip2;
+    public AudioClip myaudioClip;
+    public AudioClip myaudioClip2;
 
     public Rigidbody2D textRigid;
     public float starForce = 0f;
@@ -44,12 +44,12 @@ public class starMovement : MonoBehaviour
         textRigid = GetComponent<Rigidbody2D>();
 
         audio = (AudioSource)gameObject.GetComponent<AudioSource>();
-        myaudioClip = (AudioClip)Resources.Load("whooshSound");
+        //myaudioClip = (AudioClip)Resources.Load("whooshSound");
         audio.clip = myaudioClip;
         audio.loop = false;
 
         audio2 = (AudioSource)gameObject.GetComponent<AudioSource>();
-        myaudioClip2 = (AudioClip)Resources.Load("knifeSound");
+        //myaudioClip2 = (AudioClip)Resources.Load("knifeSound");
         audio2.clip = myaudioClip2;
         audio2.loop = false;
 

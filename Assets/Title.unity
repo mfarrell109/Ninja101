@@ -309,7 +309,11 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
+<<<<<<< HEAD
     m_RotationOrder: 0
+=======
+    m_RotationOrder: 4
+>>>>>>> Made myaudioClip and myaudioClip2 publicly visible and hooked them up to the prefab.
   spreadCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -331,7 +335,11 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
+<<<<<<< HEAD
     m_RotationOrder: 0
+=======
+    m_RotationOrder: 4
+>>>>>>> Made myaudioClip and myaudioClip2 publicly visible and hooked them up to the prefab.
 --- !u!1 &386503273
 GameObject:
   m_ObjectHideFlags: 0
@@ -1685,6 +1693,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 682fa17b7cd42b241bb006e10a72c1a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  myaudioClip: {fileID: 0}
+  myaudioClip2: {fileID: 0}
   textRigid: {fileID: 2033354684}
   starForce: 340
 --- !u!50 &2033354684
