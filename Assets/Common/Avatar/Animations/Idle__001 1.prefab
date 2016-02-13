@@ -551,11 +551,15 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
+<<<<<<< HEAD
 <<<<<<< HEAD:Assets/MyPrefabs/Idle__001 1.prefab
     m_RotationOrder: 0
 =======
     m_RotationOrder: 4
 >>>>>>> Rearranged file structure.:Assets/Common/Avatar/Animations/Idle__001 1.prefab
+=======
+    m_RotationOrder: 0
+>>>>>>> Moved ControlMenu, GameMenu, and Title to under Scenes/GameMenu/.
   spreadCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -581,11 +585,15 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
+<<<<<<< HEAD
 <<<<<<< HEAD:Assets/MyPrefabs/Idle__001 1.prefab
     m_RotationOrder: 0
 =======
     m_RotationOrder: 4
 >>>>>>> Rearranged file structure.:Assets/Common/Avatar/Animations/Idle__001 1.prefab
+=======
+    m_RotationOrder: 0
+>>>>>>> Moved ControlMenu, GameMenu, and Title to under Scenes/GameMenu/.
 --- !u!92 &9225002
 Behaviour:
   m_ObjectHideFlags: 1
@@ -786,7 +794,7 @@ MonoBehaviour:
   leftMouse: {fileID: 11480998}
   rightMouse: {fileID: 11487888}
   animController: {fileID: 9537524}
-  sceneName: GameMenu 1
+  sceneName: GameMenu
   collect: 0
   moveH: 0
   jumpForce: 900
@@ -2037,7 +2045,23 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: panLevelCustomCurve.m_RotationOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: reverbZoneMixCustomCurve.m_RotationOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: collect
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: sceneName
+      value: GameMenu
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 179884}

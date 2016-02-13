@@ -142,7 +142,7 @@ public class PlayerMovement : MonoBehaviour
         /* If player dies and has not lives. Go back to main menu */
         if (livesCounter <= 0)
         {
-            Application.LoadLevel("GameMenu 1");
+            Application.LoadLevel("GameMenu");
         }
     }
 
@@ -235,7 +235,7 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             print("Escape pressed");
-            Application.LoadLevel("GameMenu 1");
+            Application.LoadLevel("GameMenu");
         }
 
         if (moveRight == true && !faceRight)

@@ -7,7 +7,7 @@ public class changeTitleScene : MonoBehaviour
     IEnumerator timeDelay()
     {
         yield return new WaitForSeconds(9);
-        Application.LoadLevel("GameMenu 1");
+        Application.LoadLevel("GameMenu");
 
     }
     // Use this for initialization

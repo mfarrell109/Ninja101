@@ -1369,7 +1369,7 @@ MonoBehaviour:
   leftMouse: {fileID: 11407312}
   rightMouse: {fileID: 11497318}
   animController: {fileID: 9527230}
-  sceneName: GameMenu 1
+  sceneName: GameMenu
   collect: 0
   moveH: 0
   jumpForce: 800
@@ -1978,6 +1978,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: reverbZoneMixCustomCurve.m_RotationOrder
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: sceneName
+      value: GameMenu
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
