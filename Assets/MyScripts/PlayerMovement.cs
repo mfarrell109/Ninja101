@@ -188,12 +188,8 @@ public class PlayerMovement : MonoBehaviour
 
         /* Player is on dead ground */
         if (deadGround)
-        {              
-            animController.SetBool("isDead", deadGround);            
-            myRigidBody.transform.Translate(0, 0, 0);
-            speed = 0f;     
-            StartCoroutine("timeDeath");   
-            
+        {
+            KillPlayer();       
         }
 
         /* player is on the ground and keyPress spacebar */
@@ -274,6 +270,13 @@ public class PlayerMovement : MonoBehaviour
         Destroy(coinCollider.gameObject);
     }
 
+    void KillPlayer() {
+        animController.SetBool("isDead", true);
+        myRigidBody.transform.Translate(0, 0, 0);
+        speed = 0f;
+        StartCoroutine("timeDeath");
+    }
+
 
     void OnTriggerEnter2D(Collider2D collider)
     {
@@ -288,7 +291,7 @@ public class PlayerMovement : MonoBehaviour
         /* Collider happens when player dies */
         if (collider.gameObject.CompareTag("Death"))
         {
-            print("Collider death");
+            KillPlayer();
         }
 
         /* Collider happens when player collides with endDoor */
