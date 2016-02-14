@@ -309,15 +309,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-<<<<<<< HEAD:Assets/Title.unity
-<<<<<<< HEAD
     m_RotationOrder: 0
-=======
-    m_RotationOrder: 4
->>>>>>> Made myaudioClip and myaudioClip2 publicly visible and hooked them up to the prefab.
-=======
-    m_RotationOrder: 0
->>>>>>> Moved ControlMenu, GameMenu, and Title to under Scenes/GameMenu/.:Assets/Scenes/GameMenu/Title.unity
   spreadCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -339,15 +331,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-<<<<<<< HEAD:Assets/Title.unity
-<<<<<<< HEAD
     m_RotationOrder: 0
-=======
-    m_RotationOrder: 4
->>>>>>> Made myaudioClip and myaudioClip2 publicly visible and hooked them up to the prefab.
-=======
-    m_RotationOrder: 0
->>>>>>> Moved ControlMenu, GameMenu, and Title to under Scenes/GameMenu/.:Assets/Scenes/GameMenu/Title.unity
 --- !u!1 &386503273
 GameObject:
   m_ObjectHideFlags: 0

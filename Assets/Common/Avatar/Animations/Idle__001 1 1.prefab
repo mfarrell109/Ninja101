@@ -551,15 +551,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-<<<<<<< HEAD
-<<<<<<< HEAD:Assets/MyPrefabs/Idle__001 1 1.prefab
     m_RotationOrder: 0
-=======
-    m_RotationOrder: 4
->>>>>>> Rearranged file structure.:Assets/Common/Avatar/Animations/Idle__001 1 1.prefab
-=======
-    m_RotationOrder: 0
->>>>>>> Moved ControlMenu, GameMenu, and Title to under Scenes/GameMenu/.
   spreadCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -570,11 +562,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-<<<<<<< HEAD:Assets/MyPrefabs/Idle__001 1 1.prefab
-    m_RotationOrder: 0
-=======
     m_RotationOrder: 4
->>>>>>> Rearranged file structure.:Assets/Common/Avatar/Animations/Idle__001 1 1.prefab
   reverbZoneMixCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -585,15 +573,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-<<<<<<< HEAD
-<<<<<<< HEAD:Assets/MyPrefabs/Idle__001 1 1.prefab
     m_RotationOrder: 0
-=======
-    m_RotationOrder: 4
->>>>>>> Rearranged file structure.:Assets/Common/Avatar/Animations/Idle__001 1 1.prefab
-=======
-    m_RotationOrder: 0
->>>>>>> Moved ControlMenu, GameMenu, and Title to under Scenes/GameMenu/.
 --- !u!92 &9274770
 Behaviour:
   m_ObjectHideFlags: 1
@@ -730,11 +710,7 @@ MonoBehaviour:
     m_MinSize: 0
     m_MaxSize: 40
     m_Alignment: 3
-<<<<<<< HEAD:Assets/MyPrefabs/Idle__001 1 1.prefab
-    m_AlignByGeometry: 1
-=======
     m_AlignByGeometry: 0
->>>>>>> Rearranged file structure.:Assets/Common/Avatar/Animations/Idle__001 1 1.prefab
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
@@ -846,11 +822,7 @@ MonoBehaviour:
     m_MinSize: 0
     m_MaxSize: 40
     m_Alignment: 1
-<<<<<<< HEAD:Assets/MyPrefabs/Idle__001 1 1.prefab
-    m_AlignByGeometry: 1
-=======
     m_AlignByGeometry: 0
->>>>>>> Rearranged file structure.:Assets/Common/Avatar/Animations/Idle__001 1 1.prefab
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
