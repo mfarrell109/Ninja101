@@ -295,9 +295,14 @@ public class AiStateController : MonoBehaviour
                         throwPosition = leftThrowPosition.position;
                     }
 
+                    Vector3 vecToPlayer = target.transform.position - transform.position;
+                    vecToPlayer.z = 0.0f;
+                    vecToPlayer.Normalize();
+                    Vector2 force = new Vector2(vecToPlayer.x * throwForce, vecToPlayer.y * throwForce);
+
                     GameObject projectile = (GameObject)Instantiate(throwable, throwPosition, Quaternion.identity);
                     Rigidbody2D body = projectile.GetComponent<Rigidbody2D>();
-                    body.AddForce(new Vector2(throwForce, 0f));
+                    body.AddForce(force);
                     body.AddTorque(100f);
                     throwTime = 0.0f;
                     throwAnimTime = 0.0f;
