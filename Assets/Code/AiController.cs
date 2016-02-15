@@ -3,12 +3,12 @@ using System.Collections;
 
 public class AiController : MonoBehaviour
 {
-    enum FaceDirection // Ensure only two directions exist to convert to boolean values...
+    private enum FaceDirection // Ensure only two directions exist to convert to boolean values...
     {
         RIGHT,
         LEFT
     }
-    enum State
+    private enum State
     {
         IDLE,
         RUN,
@@ -17,12 +17,25 @@ public class AiController : MonoBehaviour
         DEAD
     }
 
+    [Tooltip("Throwing force at a specific impulse aimed at the target")]
+    public float throwForce = 100f;
+    [Tooltip("Object to throw")]
+    public GameObject throwable;
+    [Tooltip("Relative position to throw objects in the right direction")]
+    public Transform rightThrowPosition;
+    [Tooltip("Relative position to throw objects in the left direction")]
+    public Transform leftThrowPosition;
+
+    [Tooltip("Jumping force at a specific vertical impulse")]
     public float jumpForce = 900f;
+    [Tooltip("Layer mask that determines walkable ground")]
     public LayerMask groundLayer;
+    [Tooltip("Layer mask that determines damaging ground")]
     public LayerMask deadGroundLayer;
+    [Tooltip("Relative position in which the sprite is considered to be on the ground")]
     public Transform groundingPosition;
 
-    private Rigidbody2D rigidbody;
+    private Rigidbody2D rigidBody;
     private SpriteRenderer spriteRenderer; // Assumes a SpriteRenderer exists
     private Animator animator; // Animator attached to the GameObject, if any.
     private bool updateAnimator = true; // Flip this flag to true if you want to update the animator on the next frame
@@ -31,8 +44,16 @@ public class AiController : MonoBehaviour
     private FaceDirection direction = FaceDirection.RIGHT;
     private float groundRadius = 0.8f;
     private bool isGrounded = false;
-    private float jumpDelay = 0.2f;
+    private float jumpDelay = 0.2f; // Time required between jumps
     private float jumpTime = 0.0f; // Time since last jump
+
+    private float throwDelay = 2.0f; // Time between throws to avoid spam
+    private float throwTime = 0.0f; // Time since last throw
+    private float throwAnimDelay = 0.4f; // Time to wait during throw state to sync up to the animation
+    private float throwAnimTime = 0.0f; // Time since throw started
+
+    private float deathTime = 0.0f; // Time since death
+    private float deathDelay = 4.0f; // Lay on ground for four seconds
 
     private Vector3 moveDelta = new Vector3(); // Used to determine transition between movement states
     private Vector3 lastMovePos = new Vector3(); // Used to calculate movement delta
@@ -41,7 +62,7 @@ public class AiController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        rigidbody = GetComponent<Rigidbody2D>();
+        rigidBody = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
     }
@@ -51,7 +72,11 @@ public class AiController : MonoBehaviour
     {
         HandleGrounding();
         HandleActionStates();
-        UpdateAI();
+
+        if (state != State.DEAD)
+        {
+            UpdateAI();
+        }
     }
 
     void LateUpdate()
@@ -65,15 +90,9 @@ public class AiController : MonoBehaviour
         // TODO: Actually do stuff
         if (isGrounded)
         {
-            if (jumpTime > jumpDelay)
-            {
-                rigidbody.AddForce(new Vector2(0, jumpForce));
-                jumpTime = 0.0f;
-            }
-            else {
-                jumpTime += Time.deltaTime;
-            }
-            transform.Translate(Time.deltaTime, 0f, 0f);
+            SetToFace(FaceDirection.RIGHT);
+            Throw();
+            //transform.Translate(Time.deltaTime, 0f, 0f);
         }
     }
 
@@ -164,6 +183,54 @@ public class AiController : MonoBehaviour
         }
     }
 
+    private void Jump()
+    {
+        if (jumpTime > jumpDelay)
+        {
+            rigidBody.AddForce(new Vector2(0, jumpForce));
+            jumpTime = 0.0f;
+        }
+        else
+        {
+            jumpTime += Time.deltaTime;
+        }
+    }
+
+    private void Throw()
+    {
+        if (throwTime > throwDelay) // throw objects based on time restriction
+        {
+            SetState(State.THROW);
+            if (throwAnimTime > throwAnimDelay) // throw at the correct timing in the animation
+            {
+                Vector3 throwPosition;
+                if (direction == FaceDirection.RIGHT)
+                {
+                    throwPosition = rightThrowPosition.position;
+                }
+                else
+                {
+                    throwPosition = leftThrowPosition.position;
+                }
+
+                GameObject projectile = (GameObject)Instantiate(throwable, throwPosition, Quaternion.identity);
+                Rigidbody2D body = projectile.GetComponent<Rigidbody2D>();
+                body.AddForce(new Vector2(throwForce, 0f));
+                body.AddTorque(100f);
+                throwTime = 0.0f;
+                throwAnimTime = 0.0f;
+            }
+            else
+            {
+                throwAnimTime += Time.deltaTime;
+            }
+        }
+        else
+        {
+            throwTime += Time.deltaTime;
+        }
+    }
+
     private void OnIdle()
     {
         if (moveDelta.magnitude > 0.0f) // Must be moving!
@@ -205,7 +272,6 @@ public class AiController : MonoBehaviour
 
     private void OnThrow()
     {
-        // TODO: Throw shruiken
         SetState(State.IDLE);
     }
 
@@ -224,6 +290,29 @@ public class AiController : MonoBehaviour
 
     private void OnDead()
     {
-        // TODO: handle scoring and remove GameObject after a period of time, here.
+        if (deathTime > deathDelay)
+        {
+            Destroy(gameObject);
+            // Don't need to reset timer because this script will stop running
+        }
+        else
+        {
+            deathTime += Time.deltaTime;
+        }
+    }
+
+    void KillSelf()
+    {
+        SetState(State.DEAD);
+        rigidBody.velocity.Set(0.0f, 0.0f);
+    }
+
+    void OnTriggerEnter2D(Collider2D collider)
+    {
+        /* Collider happens when player dies */
+        if (collider.gameObject.CompareTag("Death"))
+        {
+            KillSelf();
+        }
     }
 }
