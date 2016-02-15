@@ -280,6 +280,9 @@ public class AiStateController : MonoBehaviour
     {
         if (isGrounded && state == AiState.IDLE)
         {
+            // Face towards target
+            LookAt(target);
+
             if (throwTime > throwDelay) // throw objects based on time restriction
             {
                 SetState(AiState.THROW);
@@ -316,6 +319,21 @@ public class AiStateController : MonoBehaviour
             {
                 throwTime += Time.deltaTime;
             }
+        }
+    }
+
+    public void LookAt(GameObject target)
+    {
+        Vector3 vecToTarget = target.transform.position - transform.position;
+        vecToTarget.z = 0.0f;
+        float dot = Vector2.Dot(vecToTarget.normalized, transform.right);
+        if (dot > 0)
+        {
+            FaceDirection(AiFaceDirection.RIGHT);
+        }
+        else
+        {
+            FaceDirection(AiFaceDirection.LEFT);
         }
     }
     
