@@ -3,7 +3,7 @@ using System.Collections;
 
 public class TrackMovement : MonoBehaviour {
     public bool vertical = false;
-    public float offset = 1.0f;
+    public float offset = 5.0f;
     public float speed = 1.0f;
     
     private Vector3 start = new Vector3();
