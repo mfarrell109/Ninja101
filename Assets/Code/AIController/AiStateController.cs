@@ -1,14 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class AiController : MonoBehaviour
+namespace UnityEngine
 {
-    private enum FaceDirection // Ensure only two directions exist to convert to boolean values...
+    public enum AiFaceDirection // Ensure only two directions exist to convert to boolean values...
     {
         RIGHT,
         LEFT
     }
-    private enum State
+    public enum AiState
     {
         IDLE,
         RUN,
@@ -16,6 +16,11 @@ public class AiController : MonoBehaviour
         JUMP,
         DEAD
     }
+}
+
+public class AiStateController : MonoBehaviour
+{
+    
 
     [Tooltip("Throwing force at a specific impulse aimed at the target")]
     public float throwForce = 100f;
@@ -40,8 +45,8 @@ public class AiController : MonoBehaviour
     private Animator animator; // Animator attached to the GameObject, if any.
     private bool updateAnimator = true; // Flip this flag to true if you want to update the animator on the next frame
 
-    private State state = State.IDLE; // Current state of the AI GameObject
-    private FaceDirection direction = FaceDirection.RIGHT;
+    private AiState state = AiState.IDLE; // Current state of the AI GameObject
+    private AiFaceDirection direction = AiFaceDirection.RIGHT;
     private float groundRadius = 0.8f;
     private bool isGrounded = false;
     private float jumpDelay = 0.2f; // Time required between jumps
@@ -58,7 +63,6 @@ public class AiController : MonoBehaviour
     private Vector3 moveDelta = new Vector3(); // Used to determine transition between movement states
     private Vector3 lastMovePos = new Vector3(); // Used to calculate movement delta
 
-
     // Use this for initialization
     void Start()
     {
@@ -72,28 +76,6 @@ public class AiController : MonoBehaviour
     {
         HandleGrounding();
         HandleActionStates();
-
-        if (state != State.DEAD)
-        {
-            UpdateAI();
-        }
-    }
-
-    void LateUpdate()
-    {
-        moveDelta = transform.position - lastMovePos;
-        lastMovePos.Set(transform.position.x, transform.position.y, transform.position.z);
-    }
-
-    private void UpdateAI()
-    {
-        // TODO: Actually do stuff
-        if (isGrounded)
-        {
-            SetToFace(FaceDirection.RIGHT);
-            Throw();
-            //transform.Translate(Time.deltaTime, 0f, 0f);
-        }
     }
 
     private void HandleActionStates()
@@ -110,19 +92,19 @@ public class AiController : MonoBehaviour
 
         switch (state)
         {
-            case State.IDLE:
+            case AiState.IDLE:
                 OnIdle();
                 break;
-            case State.RUN:
+            case AiState.RUN:
                 OnRun();
                 break;
-            case State.THROW:
+            case AiState.THROW:
                 OnThrow();
                 break;
-            case State.JUMP:
+            case AiState.JUMP:
                 OnJump();
                 break;
-            case State.DEAD:
+            case AiState.DEAD:
                 OnDead();
                 break;
         }
@@ -133,21 +115,21 @@ public class AiController : MonoBehaviour
         if (IsOverGround())
         {
             SetGrounded(true);
-            if (state == State.JUMP) // Shouldn't be jumping if grounded. Revert to idle for movement check
+            if (state == AiState.JUMP) // Shouldn't be jumping if grounded. Revert to idle for movement check
             {
-                SetState(State.IDLE);
+                SetState(AiState.IDLE);
             }
         }
         else if (IsOverDeadGround())
         {
-            SetState(State.DEAD);
+            SetState(AiState.DEAD);
         }
         else // Must be jumping or falling
         {
             SetGrounded(false);
-            if (state != State.JUMP) // Ensure jumping state
+            if (state != AiState.JUMP) // Ensure jumping state
             {
-                SetState(State.JUMP);
+                SetState(AiState.JUMP);
             }
         }
     }
@@ -168,66 +150,18 @@ public class AiController : MonoBehaviour
         return Physics2D.OverlapCircle(groundingPosition.position, groundRadius, deadGroundLayer);
     }
 
-    private void SetState(State newState)
+    private void SetState(AiState newState)
     {
         state = newState;
         updateAnimator = true;
     }
 
-    private void SetToFace(FaceDirection newDirection)
+    public void FaceDirection(AiFaceDirection newDirection)
     {
-        if (direction != newDirection && state != State.DEAD)
+        if (direction != newDirection && state != AiState.DEAD)
         {
             direction = newDirection;
             spriteRenderer.flipX = System.Convert.ToBoolean((int)newDirection);
-        }
-    }
-
-    private void Jump()
-    {
-        if (jumpTime > jumpDelay)
-        {
-            rigidBody.AddForce(new Vector2(0, jumpForce));
-            jumpTime = 0.0f;
-        }
-        else
-        {
-            jumpTime += Time.deltaTime;
-        }
-    }
-
-    private void Throw()
-    {
-        if (throwTime > throwDelay) // throw objects based on time restriction
-        {
-            SetState(State.THROW);
-            if (throwAnimTime > throwAnimDelay) // throw at the correct timing in the animation
-            {
-                Vector3 throwPosition;
-                if (direction == FaceDirection.RIGHT)
-                {
-                    throwPosition = rightThrowPosition.position;
-                }
-                else
-                {
-                    throwPosition = leftThrowPosition.position;
-                }
-
-                GameObject projectile = (GameObject)Instantiate(throwable, throwPosition, Quaternion.identity);
-                Rigidbody2D body = projectile.GetComponent<Rigidbody2D>();
-                body.AddForce(new Vector2(throwForce, 0f));
-                body.AddTorque(100f);
-                throwTime = 0.0f;
-                throwAnimTime = 0.0f;
-            }
-            else
-            {
-                throwAnimTime += Time.deltaTime;
-            }
-        }
-        else
-        {
-            throwTime += Time.deltaTime;
         }
     }
 
@@ -237,11 +171,11 @@ public class AiController : MonoBehaviour
         {
             if (moveDelta.y != 0.0f) // Must be jumping or falling
             {
-                SetState(State.JUMP);
+                SetState(AiState.JUMP);
             }
             else // If you're not jumping or falling but still moving, you must be running
             {
-                SetState(State.RUN);
+                SetState(AiState.RUN);
             }
         }
     }
@@ -250,21 +184,21 @@ public class AiController : MonoBehaviour
     {
         if (moveDelta.magnitude == 0.0f) // Must be idling
         {
-            SetState(State.IDLE);
+            SetState(AiState.IDLE);
         }
         else if (moveDelta.y != 0.0f) // Must be jumping or falling
         {
-            SetState(State.JUMP);
+            SetState(AiState.JUMP);
         }
         else // still running
         {
             if (moveDelta.x < 0) // Running left
             {
-                SetToFace(FaceDirection.LEFT);
+                FaceDirection(AiFaceDirection.LEFT);
             }
             else // Running right
             {
-                SetToFace(FaceDirection.RIGHT);
+                FaceDirection(AiFaceDirection.RIGHT);
             }
         }
 
@@ -272,7 +206,7 @@ public class AiController : MonoBehaviour
 
     private void OnThrow()
     {
-        SetState(State.IDLE);
+        SetState(AiState.IDLE);
     }
 
     private void OnJump()
@@ -280,11 +214,11 @@ public class AiController : MonoBehaviour
         //  A grounding check is performed before this.
         if (moveDelta.x < 0) // Jumping/falling left
         {
-            SetToFace(FaceDirection.LEFT);
+            FaceDirection(AiFaceDirection.LEFT);
         }
         else // Jumping/falling right
         {
-            SetToFace(FaceDirection.RIGHT);
+            FaceDirection(AiFaceDirection.RIGHT);
         }
     }
 
@@ -303,7 +237,7 @@ public class AiController : MonoBehaviour
 
     void KillSelf()
     {
-        SetState(State.DEAD);
+        SetState(AiState.DEAD);
         rigidBody.velocity.Set(0.0f, 0.0f);
     }
 
@@ -315,4 +249,74 @@ public class AiController : MonoBehaviour
             KillSelf();
         }
     }
+
+    public AiState GetState()
+    {
+        return state;
+    }
+
+    public bool IsGrounded()
+    {
+        return isGrounded;
+    }
+
+    public void Jump()
+    {
+        if (isGrounded)
+        {
+            if (jumpTime > jumpDelay)
+            {
+                rigidBody.AddForce(new Vector2(0, jumpForce));
+                jumpTime = 0.0f;
+            }
+            else
+            {
+                jumpTime += Time.deltaTime;
+            }
+        }
+    }
+
+    public void ThrowAt(GameObject target)
+    {
+        if (isGrounded && state == AiState.IDLE)
+        {
+            if (throwTime > throwDelay) // throw objects based on time restriction
+            {
+                SetState(AiState.THROW);
+                if (throwAnimTime > throwAnimDelay) // throw at the correct timing in the animation
+                {
+                    Vector3 throwPosition;
+                    if (direction == AiFaceDirection.RIGHT)
+                    {
+                        throwPosition = rightThrowPosition.position;
+                    }
+                    else
+                    {
+                        throwPosition = leftThrowPosition.position;
+                    }
+
+                    GameObject projectile = (GameObject)Instantiate(throwable, throwPosition, Quaternion.identity);
+                    Rigidbody2D body = projectile.GetComponent<Rigidbody2D>();
+                    body.AddForce(new Vector2(throwForce, 0f));
+                    body.AddTorque(100f);
+                    throwTime = 0.0f;
+                    throwAnimTime = 0.0f;
+                }
+                else
+                {
+                    throwAnimTime += Time.deltaTime;
+                }
+            }
+            else
+            {
+                throwTime += Time.deltaTime;
+            }
+        }
+    }
+    
+    public void Move(AiFaceDirection direction)
+    {
+        FaceDirection(direction);
+        transform.Translate(Time.deltaTime, 0f, 0f);
+    }  
 }
