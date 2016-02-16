@@ -21,7 +21,7 @@ namespace UnityEngine
 public class AiStateController : MonoBehaviour
 {
     
-
+    public float movementSpeed = 3f;
     [Tooltip("Throwing force at a specific impulse aimed at the target")]
     public float throwForce = 100f;
     [Tooltip("Object to throw")]
@@ -78,7 +78,13 @@ public class AiStateController : MonoBehaviour
         HandleActionStates();
     }
 
-    private void HandleActionStates()
+    void LateUpdate()
+    {		
+        moveDelta = transform.position - lastMovePos;		
+        lastMovePos.Set(transform.position.x, transform.position.y, transform.position.z);		
+    }
+
+private void HandleActionStates()
     {
         if (animator != null && updateAnimator == true)
         {
@@ -167,6 +173,7 @@ public class AiStateController : MonoBehaviour
 
     private void OnIdle()
     {
+        Debug.Log(moveDelta);
         if (moveDelta.magnitude > 0.0f) // Must be moving!
         {
             if (moveDelta.y != 0.0f) // Must be jumping or falling
@@ -336,10 +343,17 @@ public class AiStateController : MonoBehaviour
             FaceDirection(AiFaceDirection.LEFT);
         }
     }
-    
-    public void Move(AiFaceDirection direction)
+
+    // Move in the currently-facing direction
+    public void Move()
     {
-        FaceDirection(direction);
-        transform.Translate(Time.deltaTime, 0f, 0f);
-    }  
+        if (direction == AiFaceDirection.LEFT)
+        {
+            transform.Translate(-movementSpeed * Time.deltaTime, 0f, 0f);
+        }
+        else
+        {
+            transform.Translate(movementSpeed * Time.deltaTime, 0f, 0f);
+        }
+    }
 }
