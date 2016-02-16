@@ -173,7 +173,6 @@ private void HandleActionStates()
 
     private void OnIdle()
     {
-        Debug.Log(moveDelta);
         if (moveDelta.magnitude > 0.0f) // Must be moving!
         {
             if (moveDelta.y != 0.0f) // Must be jumping or falling

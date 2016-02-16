@@ -66,7 +66,6 @@ public class AiController : MonoBehaviour
         if (detectedObj != null)
         {
             stateController.LookAt(detectedObj);
-            Debug.Log(detectedObj);
             if (followTarget)
             {
                 // Is a wall or drop in front of us?
