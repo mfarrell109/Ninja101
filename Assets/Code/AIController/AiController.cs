@@ -36,6 +36,10 @@ public class AiController : MonoBehaviour
     public AttackAction attackAction;
     [Tooltip("Should the AI pace when there's nothing in the detection radius?")]
     public DefaultMovement defaultMovement;
+    public Transform leftEdgeDetector;
+    public Transform rightEdgeDetector;
+    public Transform leftWallDetector;
+    public Transform rightWallDetector;
 
     // Use this for initialization
     void Start()
