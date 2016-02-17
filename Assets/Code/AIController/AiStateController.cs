@@ -261,6 +261,11 @@ private void HandleActionStates()
         return state;
     }
 
+    public LayerMask GetGroundLayer()
+    {
+        return groundLayer;
+    }
+
     public bool IsGrounded()
     {
         return isGrounded;
