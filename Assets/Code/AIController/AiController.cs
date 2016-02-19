@@ -57,7 +57,7 @@ public class AiController : MonoBehaviour
     // Using FixedUpdate for raycasting -- unsure if necessary. Better safe than sorry!
     void FixedUpdate()
     {
-        if (stateController.GetState() != AiState.DEAD)
+        if (stateController.GetState() != AiState.Dead)
         {
             UpdateAI();
         }
@@ -97,7 +97,7 @@ public class AiController : MonoBehaviour
 
     private void ReactToObstacles()
     {
-        if (ObstacleInTheWay() && stateController.GetState() != AiState.JUMP)
+        if (ObstacleInTheWay() && stateController.GetState() != AiState.Jump)
         {
             if (edgeAction == EdgeAction.Jump)
             {
