@@ -36,10 +36,12 @@ public class AiController : MonoBehaviour
     public AttackAction attackAction;
     [Tooltip("Should the AI pace when there's nothing in the detection radius?")]
     public DefaultMovement defaultMovement;
+    public LayerMask platformLayer;
     public Transform leftEdgeDetector;
     public Transform rightEdgeDetector;
     public Transform leftWallDetector;
     public Transform rightWallDetector;
+    private float platformDetectionRadius = 0.8f;
 
     // Use this for initialization
     void Start()
@@ -70,11 +72,10 @@ public class AiController : MonoBehaviour
         if (detectedObj != null)
         {
             stateController.LookAt(detectedObj);
+
             if (followTarget)
             {
-                // Is a wall or drop in front of us?
-                // If so, should we jump or turn?
-                // Move after action has been taken
+                ReactToObstacles();
                 stateController.Move();
             }
 
@@ -87,13 +88,54 @@ public class AiController : MonoBehaviour
         {
             if (defaultMovement == DefaultMovement.Pace)
             {
-                // Is a wall or drop in front of us?
-                // If so, should we jump or turn?
-                // Move after action has been taken
+                ReactToObstacles();
                 stateController.Move();
             } 
             // else do nothing because idle
         }
+    }
+
+    private void ReactToObstacles()
+    {
+        if (ObstacleInTheWay() && stateController.GetState() != AiState.JUMP)
+        {
+            if (edgeAction == EdgeAction.Jump)
+            {
+                stateController.Jump();
+            }
+            else if (edgeAction == EdgeAction.Turn)
+            {
+                stateController.Turn();
+            }
+            else
+            {
+                // Do nothing
+            }
+        }
+    }
+
+    private bool ObstacleInTheWay()
+    {
+
+        Collider2D platformCollider;
+        Collider2D wallCollider;
+
+        if (stateController.GetFacingDirection() == AiFaceDirection.LEFT)
+        {
+            platformCollider = Physics2D.OverlapCircle(leftEdgeDetector.position, platformDetectionRadius, platformLayer);
+            wallCollider = Physics2D.OverlapCircle(leftWallDetector.position, platformDetectionRadius, platformLayer);
+        }
+        else
+        {
+            platformCollider = Physics2D.OverlapCircle(rightEdgeDetector.position, platformDetectionRadius, platformLayer);
+            wallCollider = Physics2D.OverlapCircle(rightWallDetector.position, platformDetectionRadius, platformLayer);
+        }
+
+        if (platformCollider == null || wallCollider != null) // Looking for an absence of platforms, and existence of walls
+        {
+            return true;
+        }
+        return false;
     }
 
     private GameObject ScanForTarget(bool lineOfSight)
