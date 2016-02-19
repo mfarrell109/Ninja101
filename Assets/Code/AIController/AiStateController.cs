@@ -51,6 +51,8 @@ public class AiStateController : MonoBehaviour
     private bool isGrounded = false;
     private float jumpDelay = 0.2f; // Time required between jumps
     private float jumpTime = 0.0f; // Time since last jump
+    private float turnDelay = 0.2f;
+    private float turnTime = 0.0f;
 
     private float throwDelay = 2.0f; // Time between throws to avoid spam
     private float throwTime = 0.0f; // Time since last throw
@@ -164,10 +166,15 @@ private void HandleActionStates()
 
     public void FaceDirection(AiFaceDirection newDirection)
     {
-        if (direction != newDirection && state != AiState.DEAD)
+        if (direction != newDirection && state != AiState.DEAD && state != AiState.JUMP && turnTime > turnDelay)
         {
             direction = newDirection;
             spriteRenderer.flipX = System.Convert.ToBoolean((int)newDirection);
+            turnTime = 0.0f;
+        }
+        else
+        {
+            turnTime += Time.deltaTime;
         }
     }
 
@@ -261,6 +268,11 @@ private void HandleActionStates()
         return state;
     }
 
+    public AiFaceDirection GetFacingDirection()
+    {
+        return direction;
+    }
+
     public LayerMask GetGroundLayer()
     {
         return groundLayer;
@@ -351,6 +363,7 @@ private void HandleActionStates()
     // Move in the currently-facing direction
     public void Move()
     {
+        Debug.Log(direction);
         if (direction == AiFaceDirection.LEFT)
         {
             transform.Translate(-movementSpeed * Time.deltaTime, 0f, 0f);
@@ -358,6 +371,18 @@ private void HandleActionStates()
         else
         {
             transform.Translate(movementSpeed * Time.deltaTime, 0f, 0f);
+        }
+    }
+
+    public void Turn()
+    {
+        if (direction == AiFaceDirection.LEFT)
+        {
+            FaceDirection(AiFaceDirection.RIGHT);
+        }
+        else
+        {
+            FaceDirection(AiFaceDirection.LEFT);
         }
     }
 }
