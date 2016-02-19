@@ -10,11 +10,11 @@ namespace UnityEngine
     }
     public enum AiState
     {
-        IDLE,
-        RUN,
-        THROW,
-        JUMP,
-        DEAD
+        Idle,
+        Run,
+        Throw,
+        Jump,
+        Dead
     }
 }
 
@@ -45,7 +45,7 @@ public class AiStateController : MonoBehaviour
     private Animator animator; // Animator attached to the GameObject, if any.
     private bool updateAnimator = true; // Flip this flag to true if you want to update the animator on the next frame
 
-    private AiState state = AiState.IDLE; // Current state of the AI GameObject
+    private AiState state = AiState.Idle; // Current state of the AI GameObject
     private AiFaceDirection direction = AiFaceDirection.RIGHT;
     private float groundRadius = 0.8f;
     private bool isGrounded = false;
@@ -100,19 +100,19 @@ private void HandleActionStates()
 
         switch (state)
         {
-            case AiState.IDLE:
+            case AiState.Idle:
                 OnIdle();
                 break;
-            case AiState.RUN:
+            case AiState.Run:
                 OnRun();
                 break;
-            case AiState.THROW:
+            case AiState.Throw:
                 OnThrow();
                 break;
-            case AiState.JUMP:
+            case AiState.Jump:
                 OnJump();
                 break;
-            case AiState.DEAD:
+            case AiState.Dead:
                 OnDead();
                 break;
         }
@@ -123,21 +123,21 @@ private void HandleActionStates()
         if (IsOverGround())
         {
             SetGrounded(true);
-            if (state == AiState.JUMP) // Shouldn't be jumping if grounded. Revert to idle for movement check
+            if (state == AiState.Jump) // Shouldn't be jumping if grounded. Revert to idle for movement check
             {
-                SetState(AiState.IDLE);
+                SetState(AiState.Idle);
             }
         }
         else if (IsOverDeadGround())
         {
-            SetState(AiState.DEAD);
+            SetState(AiState.Dead);
         }
         else // Must be jumping or falling
         {
             SetGrounded(false);
-            if (state != AiState.JUMP) // Ensure jumping state
+            if (state != AiState.Jump) // Ensure jumping state
             {
-                SetState(AiState.JUMP);
+                SetState(AiState.Jump);
             }
         }
     }
@@ -166,7 +166,7 @@ private void HandleActionStates()
 
     public void FaceDirection(AiFaceDirection newDirection)
     {
-        if (direction != newDirection && state != AiState.DEAD && state != AiState.JUMP && turnTime > turnDelay)
+        if (direction != newDirection && state != AiState.Dead && state != AiState.Jump && turnTime > turnDelay)
         {
             direction = newDirection;
             spriteRenderer.flipX = System.Convert.ToBoolean((int)newDirection);
@@ -184,11 +184,11 @@ private void HandleActionStates()
         {
             if (moveDelta.y != 0.0f) // Must be jumping or falling
             {
-                SetState(AiState.JUMP);
+                SetState(AiState.Jump);
             }
             else // If you're not jumping or falling but still moving, you must be running
             {
-                SetState(AiState.RUN);
+                SetState(AiState.Run);
             }
         }
     }
@@ -197,11 +197,11 @@ private void HandleActionStates()
     {
         if (moveDelta.magnitude == 0.0f) // Must be idling
         {
-            SetState(AiState.IDLE);
+            SetState(AiState.Idle);
         }
         else if (moveDelta.y != 0.0f) // Must be jumping or falling
         {
-            SetState(AiState.JUMP);
+            SetState(AiState.Jump);
         }
         else // still running
         {
@@ -219,7 +219,7 @@ private void HandleActionStates()
 
     private void OnThrow()
     {
-        SetState(AiState.IDLE);
+        SetState(AiState.Idle);
     }
 
     private void OnJump()
@@ -250,7 +250,7 @@ private void HandleActionStates()
 
     void KillSelf()
     {
-        SetState(AiState.DEAD);
+        SetState(AiState.Dead);
         rigidBody.velocity.Set(0.0f, 0.0f);
     }
 
@@ -301,14 +301,14 @@ private void HandleActionStates()
 
     public void ThrowAt(GameObject target)
     {
-        if (isGrounded && state == AiState.IDLE)
+        if (isGrounded && state == AiState.Idle)
         {
             // Face towards target
             LookAt(target);
 
             if (throwTime > throwDelay) // throw objects based on time restriction
             {
-                SetState(AiState.THROW);
+                SetState(AiState.Throw);
                 if (throwAnimTime > throwAnimDelay) // throw at the correct timing in the animation
                 {
                     Vector3 throwPosition;
