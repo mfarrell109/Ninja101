@@ -9,12 +9,14 @@ Class created for all aspects to player input which includes animation
 */
 public class PlayerMovement : MonoBehaviour
 {
-
     public LeftOnMouse leftMouse;
     public RightOnMouse rightMouse;
-    private Rigidbody2D myRigidBody;
     public Animator animController;
-    
+    private Rigidbody2D myRigidBody;
+
+    public GameObject startDoorUnlocked;
+    private BeginDoor beginDoorScript;
+
     /* Player attributes */
     public string sceneName;
     public static float counter = 0;
@@ -26,8 +28,8 @@ public class PlayerMovement : MonoBehaviour
     public float move = 10f;
     public bool faceRight = true;
     public bool isDead = false;
-    bool doorOpen = false;
-    bool playerStart = true;
+    bool isEndDoorOpen = false;
+    bool canPlayerMove = false;
     bool death = false;
     bool moveLeft;
     bool moveRight;
@@ -38,7 +40,7 @@ public class PlayerMovement : MonoBehaviour
     public bool deadGround;
     public bool grounded;
     public LayerMask whatIsGround;
-    public LayerMask whatIsDeadGround;   
+    public LayerMask whatIsDeadGround;
     public Transform groundCheck;
     public Transform deadGroundCheck;
 
@@ -56,15 +58,19 @@ public class PlayerMovement : MonoBehaviour
     AudioClip clip4;
 
     void Start()
-    {        
+    {
         myRigidBody = GetComponent<Rigidbody2D>();
         animController = GetComponent<Animator>();
-        
+
+        beginDoorScript = startDoorUnlocked.GetComponent<BeginDoor>();
+        beginDoorScript.startDoorOpened += SetPlayerInFrontOfDoor;
+        beginDoorScript.startDoorClosed += AllowPlayerToMove;
+
         /* level1 music */
         level1audio = (AudioSource)gameObject.GetComponent<AudioSource>();
         clip1 = (AudioClip)Resources.Load("LevelBeat");
         level1audio.clip = clip1;
-        level1audio.loop = false;             
+        level1audio.loop = false;
 
         /* jump sound */
         jumpAudio = (AudioSource)gameObject.GetComponent<AudioSource>();
@@ -84,28 +90,35 @@ public class PlayerMovement : MonoBehaviour
 
         gameAudio.PlayOneShot(clip4, 1f);
         myRigidBody.transform.Translate(0, 0, 0);
-
-        
-        
     }
-    
 
-    /* ButtonB button references this method for jumping, 
+    void SetPlayerInFrontOfDoor()
+    {
+        float newZ = -1f;
+        myRigidBody.transform.position = new Vector3(myRigidBody.transform.position.x, myRigidBody.transform.position.y, newZ);
+    }
+
+    void AllowPlayerToMove()
+    {
+        canPlayerMove = true;
+    }
+
+    /* ButtonB button references this method for jumping,
      * jumpforce variable can be changed in the editor to alter how high player jumps */
     public void Jumping()
     {
-        bool grounded = Physics2D.OverlapCircle(deadGroundCheck.position, groundRadius, whatIsGround);
-        
+        bool grounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, whatIsGround);
+
         if (grounded)
         {
             animController.SetBool("isGrounded", true);
             myRigidBody.AddForce(new Vector2(0, jumpForce));
-            jumpAudio.PlayOneShot(clip2, 1f);      
+            jumpAudio.PlayOneShot(clip2, 1f);
         }
      }
-    
-    /* This method is regarding flipping the player from facing left or 
-     *right depending on direction player is headed */    
+
+    /* This method is regarding flipping the player from facing left or
+     *right depending on direction player is headed */
     void Flip()
     {
         faceRight = !faceRight;
@@ -123,7 +136,6 @@ public class PlayerMovement : MonoBehaviour
             level1audio.PlayOneShot(clip1, 1f);
             playerDead();
             death = true;
-
         }
 
         /* If player is dead, wait for 5 seconds for animation and then destroy player object */
@@ -132,7 +144,7 @@ public class PlayerMovement : MonoBehaviour
             yield return new WaitForSeconds(5);
             myRigidBody.gameObject.active = false;
         }
-        
+
         /* Reset the level if player dies and still has more lives */
         if (livesCounter > 0)
         {
@@ -146,39 +158,30 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    /* PlayerDead method used for what happens to player when they die */ 
+    /* PlayerDead method used for what happens to player when they die */
     void playerDead()
-    {        
+    {
         isDead = true;
         livesCounter--;
-    }    
+    }
 
     void Update()
     {
-       
+        if (!canPlayerMove)
+        {
+            return;
+        }
         moveH = Input.GetAxis("Horizontal");
-     
+
         bool deadGround = Physics2D.OverlapCircle(deadGroundCheck.position, groundRadius, whatIsDeadGround);
-        bool grounded = Physics2D.OverlapCircle(deadGroundCheck.position, groundRadius, whatIsGround);
+        bool grounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, whatIsGround);
         animController.SetBool("isSpeeding", false);
         animController.SetBool("isGrounded", grounded);
         animController.SetFloat("vSpeed", myRigidBody.velocity.y);
 
-        /* Player start */
-        if (playerStart)
-        {
-            myRigidBody.transform.Translate(0,0,-0.1f);
-            if (myRigidBody.transform.position.z > 1)
-            {
-                myRigidBody.transform.Translate(0, 0, 0);
-                playerStart = false;
-            }
-            
-        }
-
-        /* This relates to actions to take for when begining door is open of each level.
+        /* This relates to actions to take for when end door is open of each level.
            Keep player movement to 0 and once open door. Then player can move */
-        if (doorOpen == true)
+        if (isEndDoorOpen == true)
         {
             moveH = 0;
             speed = 0;
@@ -189,11 +192,11 @@ public class PlayerMovement : MonoBehaviour
         /* Player is on dead ground */
         if (deadGround)
         {
-            KillPlayer();       
+            KillPlayer();
         }
 
         /* player is on the ground and keyPress spacebar */
-        if (grounded && Input.GetKeyDown(KeyCode.Space) && doorOpen == false)
+        if (grounded && Input.GetKeyDown(KeyCode.Space) && !isEndDoorOpen)
         {
             jumpAudio.PlayOneShot(clip2, 1f);
             animController.SetBool("isGrounded", true);
@@ -201,7 +204,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         /* keyPress "a" or onScreen LeftButton is held down */
-        if (Input.GetKey("a") || leftMouse.buttonHeld2 && doorOpen == false)
+        if (Input.GetKey("a") || leftMouse.buttonHeld2 && !isEndDoorOpen)
         {
                 moveLeft = true;
                 moveRight = false;
@@ -210,23 +213,22 @@ public class PlayerMovement : MonoBehaviour
         }
 
         /* keyPress "a" not held or onScreen LeftButton is not held */
-        if (Input.GetKeyUp("a") || !leftMouse && doorOpen == false )
-        {  
+        if (Input.GetKeyUp("a") || !leftMouse && !isEndDoorOpen )
+        {
             animController.SetBool("isSpeeding", false);
         }
 
         /* KeyPress "d" is held or onScreen RightButton is held */
-        if (Input.GetKey("d")  || rightMouse.buttonHeld  && doorOpen == false)
+        if (Input.GetKey("d")  || rightMouse.buttonHeld  && !isEndDoorOpen)
         {
                 moveLeft = false;
                 moveRight = true;
                 animController.SetBool("isSpeeding", true);
                 myRigidBody.transform.Translate((moveH + 1) * Time.deltaTime * speed, 0, 0);
-
         }
 
         /* KeyPress "d" is not held or onScreen RightButton is not held */
-        if (Input.GetKeyUp("d") || !rightMouse && doorOpen == false)
+        if (Input.GetKeyUp("d") || !rightMouse && !isEndDoorOpen)
         {
             animController.SetBool("isSpeeding", false);
         }
@@ -248,15 +250,13 @@ public class PlayerMovement : MonoBehaviour
             //if (grounded && !deadGround)
                 Flip();
         }
-
     } //End update()
 
     IEnumerator DoorTimer()
     {
-        yield return new WaitForSeconds(1f);        
+        yield return new WaitForSeconds(1f);
         myRigidBody.gameObject.active = false;
         SceneChange(sceneName);
-
     }
 
     public void SceneChange(string sceneName)
@@ -285,9 +285,9 @@ public class PlayerMovement : MonoBehaviour
         {
             CollectCoin(collider);
             collect = true;
-            coinAudio.PlayOneShot(clip3,1f);
+            coinAudio.PlayOneShot(clip3, 1f);
         }
-        
+
         /* Collider happens when player dies */
         if (collider.gameObject.CompareTag("Death"))
         {
@@ -297,19 +297,8 @@ public class PlayerMovement : MonoBehaviour
         /* Collider happens when player collides with endDoor */
         if (collider.gameObject.CompareTag("EndDoor"))
         {
-            doorOpen = true;
+            isEndDoorOpen = true;
             print("Collides with End Door");
-       
         }
-        
     }
-
-
 }//End Class
-
-
-
-
-
-
-
