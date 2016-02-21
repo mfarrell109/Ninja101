@@ -42,10 +42,20 @@ public class AiController : MonoBehaviour
     public Transform leftWallDetector;
     public Transform rightWallDetector;
     private float platformDetectionRadius = 0.8f;
+    private RaycastHit2D hit;
 
     // Use this for initialization
     void Start()
     {
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        if (hit != null)
+        {
+            Gizmos.DrawLine(transform.position, hit.point);
+        }
     }
 
     void OnDrawGizmosSelected()
@@ -71,11 +81,12 @@ public class AiController : MonoBehaviour
         // if detected, follow and throw
         if (detectedObj != null)
         {
+            Debug.Log("Looking at target");
             stateController.LookAt(detectedObj);
 
             if (followTarget)
             {
-                ReactToObstacles();
+                ReactToObstacles(true);
                 stateController.Move();
             }
 
@@ -88,14 +99,14 @@ public class AiController : MonoBehaviour
         {
             if (defaultMovement == DefaultMovement.Pace)
             {
-                ReactToObstacles();
+                ReactToObstacles(false);
                 stateController.Move();
-            } 
+            }
             // else do nothing because idle
         }
     }
 
-    private void ReactToObstacles()
+    private void ReactToObstacles(bool following)
     {
         if (ObstacleInTheWay() && stateController.GetState() != AiState.Jump)
         {
@@ -103,8 +114,9 @@ public class AiController : MonoBehaviour
             {
                 stateController.Jump();
             }
-            else if (edgeAction == EdgeAction.Turn)
+            else if (edgeAction == EdgeAction.Turn && !following)
             {
+                Debug.Log("TURN!");
                 stateController.Turn();
             }
             else
@@ -151,8 +163,8 @@ public class AiController : MonoBehaviour
             Vector3 vecToObj = collider.gameObject.transform.position - transform.position;
             vecToObj.z = 0.0f;
             vecToObj.Normalize();
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, vecToObj, detectionRadius, targetLayer);
-            if (hit.collider != null)
+            hit = Physics2D.Raycast(transform.position, vecToObj, detectionRadius, targetLayer | platformLayer);
+            if (hit.collider != null && targetLayer >> hit.collider.gameObject.layer == 1) // Right-shift targetLayermask to see if it's equal to the gameObject layer
             {
                 return hit.collider.gameObject;
             }
