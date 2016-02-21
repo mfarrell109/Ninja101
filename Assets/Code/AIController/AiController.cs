@@ -30,7 +30,7 @@ public class AiController : MonoBehaviour
     public float detectionRadius;
     [Tooltip("Does the AI need line of sight to detect potential target?")]
     public bool needLineOfSight;
-    [Tooltip("What should the AI do when it reaches a drop, or a wall?")]
+    [Tooltip("What should the AI do when it reaches a drop, or a wall? NOTE: Cannot trigger turn action when following target")]
     public EdgeAction edgeAction;
     [Tooltip("Should the AI do something other than look at the target? NOTE: Cannot throw while running")]
     public AttackAction attackAction;
@@ -42,20 +42,10 @@ public class AiController : MonoBehaviour
     public Transform leftWallDetector;
     public Transform rightWallDetector;
     private float platformDetectionRadius = 0.8f;
-    private RaycastHit2D hit;
 
     // Use this for initialization
     void Start()
     {
-    }
-
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        if (hit != null)
-        {
-            Gizmos.DrawLine(transform.position, hit.point);
-        }
     }
 
     void OnDrawGizmosSelected()
@@ -81,7 +71,6 @@ public class AiController : MonoBehaviour
         // if detected, follow and throw
         if (detectedObj != null)
         {
-            Debug.Log("Looking at target");
             stateController.LookAt(detectedObj);
 
             if (followTarget)
@@ -116,7 +105,6 @@ public class AiController : MonoBehaviour
             }
             else if (edgeAction == EdgeAction.Turn && !following)
             {
-                Debug.Log("TURN!");
                 stateController.Turn();
             }
             else
@@ -163,8 +151,8 @@ public class AiController : MonoBehaviour
             Vector3 vecToObj = collider.gameObject.transform.position - transform.position;
             vecToObj.z = 0.0f;
             vecToObj.Normalize();
-            hit = Physics2D.Raycast(transform.position, vecToObj, detectionRadius, targetLayer | platformLayer);
-            if (hit.collider != null && targetLayer >> hit.collider.gameObject.layer == 1) // Right-shift targetLayermask to see if it's equal to the gameObject layer
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, vecToObj, detectionRadius, targetLayer | platformLayer);
+            if (hit.collider != null && targetLayer == (targetLayer | (1 << hit.collider.gameObject.layer))) // Lsh hit obj to see if it's in the target layermask
             {
                 return hit.collider.gameObject;
             }
