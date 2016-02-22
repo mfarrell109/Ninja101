@@ -51,6 +51,7 @@ public class AiStateController : MonoBehaviour
     private bool isGrounded = false;
     private float jumpDelay = 0.2f; // Time required between jumps
     private float jumpTime = 0.0f; // Time since last jump
+    private float jumpDeviation = 0.1f; // The amount of movement on the x-axis per frame to be considered to be jumping or falling
     private float turnDelay = 0.2f;
     private float turnTime = 0.0f;
 
@@ -63,6 +64,7 @@ public class AiStateController : MonoBehaviour
     private float deathDelay = 4.0f; // Lay on ground for four seconds
 
     private Vector3 moveDelta = new Vector3(); // Used to determine transition between movement states
+    private Vector3 prevMoveDelta = new Vector3(); // Used to check for accurate idling
     private Vector3 lastMovePos = new Vector3(); // Used to calculate movement delta
 
     // Use this for initialization
@@ -81,9 +83,11 @@ public class AiStateController : MonoBehaviour
     }
 
     void LateUpdate()
-    {		
+    {
+        prevMoveDelta.Set(moveDelta.x, moveDelta.y, 0f);
         moveDelta = transform.position - lastMovePos;		
-        lastMovePos.Set(transform.position.x, transform.position.y, transform.position.z);		
+        lastMovePos.Set(transform.position.x, transform.position.y, transform.position.z);
+        turnTime += Time.deltaTime;
     }
 
 private void HandleActionStates()
@@ -144,8 +148,11 @@ private void HandleActionStates()
 
     private void SetGrounded(bool grounded)
     {
-        isGrounded = grounded;
-        updateAnimator = true;
+        if (isGrounded != grounded)
+        {
+            isGrounded = grounded;
+            updateAnimator = true;
+        }
     }
 
     private bool IsOverGround()
@@ -160,8 +167,11 @@ private void HandleActionStates()
 
     private void SetState(AiState newState)
     {
-        state = newState;
-        updateAnimator = true;
+        if (state != newState)
+        {
+            state = newState;
+            updateAnimator = true;
+        }
     }
 
     public void FaceDirection(AiFaceDirection newDirection)
@@ -172,17 +182,19 @@ private void HandleActionStates()
             spriteRenderer.flipX = System.Convert.ToBoolean((int)newDirection);
             turnTime = 0.0f;
         }
-        else
-        {
-            turnTime += Time.deltaTime;
-        }
+    }
+
+
+    private bool ShouldBeJumping()
+    {
+        return !Mathf.Approximately(moveDelta.y, 0.0f) && Mathf.Abs(moveDelta.y) > jumpDeviation;
     }
 
     private void OnIdle()
     {
         if (moveDelta.magnitude > 0.0f) // Must be moving!
         {
-            if (moveDelta.y != 0.0f) // Must be jumping or falling
+            if (ShouldBeJumping()) // Must be jumping or falling
             {
                 SetState(AiState.Jump);
             }
@@ -195,26 +207,14 @@ private void HandleActionStates()
 
     private void OnRun()
     {
-        if (moveDelta.magnitude == 0.0f) // Must be idling
+        if (Mathf.Approximately(moveDelta.magnitude, 0.0f) && Mathf.Approximately(prevMoveDelta.magnitude, 0.0f)) // Must be idling
         {
             SetState(AiState.Idle);
         }
-        else if (moveDelta.y != 0.0f) // Must be jumping or falling
+        else if (ShouldBeJumping()) // Must be jumping or falling
         {
             SetState(AiState.Jump);
         }
-        else // still running
-        {
-            if (moveDelta.x < 0) // Running left
-            {
-                FaceDirection(AiFaceDirection.LEFT);
-            }
-            else // Running right
-            {
-                FaceDirection(AiFaceDirection.RIGHT);
-            }
-        }
-
     }
 
     private void OnThrow()
@@ -225,14 +225,6 @@ private void HandleActionStates()
     private void OnJump()
     {
         //  A grounding check is performed before this.
-        if (moveDelta.x < 0) // Jumping/falling left
-        {
-            FaceDirection(AiFaceDirection.LEFT);
-        }
-        else // Jumping/falling right
-        {
-            FaceDirection(AiFaceDirection.RIGHT);
-        }
     }
 
     private void OnDead()
@@ -363,7 +355,6 @@ private void HandleActionStates()
     // Move in the currently-facing direction
     public void Move()
     {
-        Debug.Log(direction);
         if (direction == AiFaceDirection.LEFT)
         {
             transform.Translate(-movementSpeed * Time.deltaTime, 0f, 0f);
