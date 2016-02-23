@@ -288,19 +288,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b02d496252f5e9d46bf38efabb927147, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-<<<<<<< HEAD
-  stateController: {fileID: 11427224}
-  targetLayer:
-    serializedVersion: 2
-    m_Bits: 512
-  followTarget: 0
-  detectionRadius: 50
-  needLineOfSight: 1
-  edgeAction: 2
-  attackAction: 1
-  defaultMovement: 1
-  platformLayer:
-=======
   movementSpeed: 6
   throwForce: 100
   throwable: {fileID: 193448, guid: 9c0726f29a4cf4d42892659520a57c6a, type: 2}
@@ -308,7 +295,6 @@ MonoBehaviour:
   leftThrowPosition: {fileID: 438252}
   jumpForce: 900
   groundLayer:
->>>>>>> 461fe18c49c5c3d98c35bea8e699787682e843c9
     serializedVersion: 2
     m_Bits: 256
   deadGroundLayer:
@@ -379,15 +365,7 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 0}
-      propertyPath: detectionRadius
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: followTarget
-      value: 0
-      objectReference: {fileID: 0}
+    m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 114220}
