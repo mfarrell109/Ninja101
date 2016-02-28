@@ -7,8 +7,8 @@ TagManager:
   - Ground
   - Level1Tile
   - Coins
-  - Death
   - EndDoor
+  - EventManager
   layers:
   - Default
   - TransparentFX

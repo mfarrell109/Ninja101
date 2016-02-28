@@ -3,7 +3,7 @@ using System.Collections;
 
 public class EventManager : MonoBehaviour {
 
-    public delegate void OnPlayerHit();
+    public delegate void OnPlayerHit(int dmg);
 
     public OnPlayerHit onPlayerHit;
 
@@ -12,7 +12,8 @@ public class EventManager : MonoBehaviour {
     {
         if (onPlayerHit != null)
         {
-            onPlayerHit();
+            Debug.Log("HIT");
+            onPlayerHit(dmg);
         }
     }
 }

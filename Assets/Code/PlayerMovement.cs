@@ -37,12 +37,10 @@ public class PlayerMovement : MonoBehaviour
     float groundRadius = 0.8f;
 
     /* Different ground check */
-    public bool deadGround;
     public bool grounded;
     public LayerMask whatIsGround;
     public LayerMask whatIsDeadGround;
     public Transform groundCheck;
-    public Transform deadGroundCheck;
 
     /* Sound files */
     private AudioSource level1audio;
@@ -90,6 +88,18 @@ public class PlayerMovement : MonoBehaviour
 
         gameAudio.PlayOneShot(clip4, 1f);
         myRigidBody.transform.Translate(0, 0, 0);
+
+        // Subscribe to events
+        EventManager eventManager = GameObject.FindGameObjectWithTag("EventManager").GetComponent<EventManager>();
+        eventManager.onPlayerHit += OnPlayerHit;
+    }
+
+    void OnPlayerHit(int dmg)
+    {
+        // TODO: Inflict damage upon player
+        // if (dmg < playerHealth) then reduce health
+        // else
+        KillPlayer();
     }
 
     void SetPlayerInFrontOfDoor()
@@ -172,8 +182,7 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
         moveH = Input.GetAxis("Horizontal");
-
-        bool deadGround = Physics2D.OverlapCircle(deadGroundCheck.position, groundRadius, whatIsDeadGround);
+        
         bool grounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, whatIsGround);
         animController.SetBool("isSpeeding", false);
         animController.SetBool("isGrounded", grounded);
@@ -187,12 +196,6 @@ public class PlayerMovement : MonoBehaviour
             speed = 0;
             animController.SetBool("isSpeeding", false);
             StartCoroutine(DoorTimer());
-        }
-
-        /* Player is on dead ground */
-        if (deadGround)
-        {
-            KillPlayer();
         }
 
         /* player is on the ground and keyPress spacebar */
@@ -286,12 +289,6 @@ public class PlayerMovement : MonoBehaviour
             CollectCoin(collider);
             collect = true;
             coinAudio.PlayOneShot(clip3, 1f);
-        }
-
-        /* Collider happens when player dies */
-        if (collider.gameObject.CompareTag("Death"))
-        {
-            KillPlayer();
         }
 
         /* Collider happens when player collides with endDoor */

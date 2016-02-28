@@ -10,6 +10,7 @@ GameObject:
   - 4: {fileID: 407560}
   - 212: {fileID: 21290794}
   - 95: {fileID: 9586572}
+  - 114: {fileID: 11466332}
   m_Layer: 0
   m_Name: bolt_ball_0004
   m_TagString: Untagged
@@ -46,6 +47,18 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &11466332
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 182560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 243c649e65f8c394a8dd47fa531e757d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boltDamage: 100
 --- !u!212 &21290794
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -82,7 +95,11 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: boltDamage
+      value: 100
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 182560}
