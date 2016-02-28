@@ -92,6 +92,7 @@ public class PlayerMovement : MonoBehaviour
         // Subscribe to events
         EventManager eventManager = GameObject.FindGameObjectWithTag("EventManager").GetComponent<EventManager>();
         eventManager.onPlayerHit += OnPlayerHit;
+        eventManager.onCoinCollected += CollectCoin;
     }
 
     void OnPlayerHit(int dmg)
@@ -267,10 +268,11 @@ public class PlayerMovement : MonoBehaviour
         Application.LoadLevel(sceneName);
     }
 
-    void CollectCoin(Collider2D coinCollider)
+    void CollectCoin()
     {
+        collect = true;
+        coinAudio.PlayOneShot(clip3, 1f);
         counter++;
-        Destroy(coinCollider.gameObject);
     }
 
     void KillPlayer() {
@@ -283,14 +285,6 @@ public class PlayerMovement : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collider)
     {
-        /* Collider used for collecting coins */
-        if (collider.gameObject.CompareTag("Coins"))
-        {
-            CollectCoin(collider);
-            collect = true;
-            coinAudio.PlayOneShot(clip3, 1f);
-        }
-
         /* Collider happens when player collides with endDoor */
         if (collider.gameObject.CompareTag("EndDoor"))
         {
