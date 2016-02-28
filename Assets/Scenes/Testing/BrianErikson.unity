@@ -3411,6 +3411,10 @@ Prefab:
       propertyPath: m_Layer
       value: 9
       objectReference: {fileID: 0}
+    - target: {fileID: 11415850, guid: c20d8460155c8664b9beefc5a7db1534, type: 2}
+      propertyPath: startDoorUnlocked
+      value: 
+      objectReference: {fileID: 2007987710}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c20d8460155c8664b9beefc5a7db1534, type: 2}
   m_IsPrefabParent: 0
@@ -5103,6 +5107,7 @@ MonoBehaviour:
   leftMouse: {fileID: 1565901514}
   rightMouse: {fileID: 1870700513}
   animController: {fileID: 1416446602}
+  startDoorUnlocked: {fileID: 2007987710}
   sceneName: GameMenu 1
   collect: 0
   moveH: 0
@@ -5944,6 +5949,7 @@ MonoBehaviour:
   leftMouse: {fileID: 1565901514}
   rightMouse: {fileID: 1870700513}
   animController: {fileID: 1416446602}
+  startDoorUnlocked: {fileID: 0}
   sceneName: 
   collect: 0
   moveH: 0
@@ -7204,6 +7210,7 @@ MonoBehaviour:
   leftMouse: {fileID: 1565901514}
   rightMouse: {fileID: 1870700513}
   animController: {fileID: 1416446602}
+  startDoorUnlocked: {fileID: 0}
   sceneName: 
   collect: 0
   moveH: 0
@@ -7760,6 +7767,10 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: fa86ad8f64af08747844d9c20e8555f9, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &2007987710 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 113808, guid: 594b5ca6b17044f4492aa5542ce99bb0, type: 2}
+  m_PrefabInternal: {fileID: 493176383}
 --- !u!4 &2009932359 stripped
 Transform:
   m_PrefabParentObject: {fileID: 447754, guid: 2036f95b1263e1b4aaa20bb0d515d821, type: 2}
