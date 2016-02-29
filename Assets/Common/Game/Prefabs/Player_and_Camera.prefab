@@ -777,7 +777,7 @@ MonoBehaviour:
   leftMouse: {fileID: 11461990}
   rightMouse: {fileID: 11478458}
   animController: {fileID: 9571880}
-  startDoorUnlocked: {fileID: 0}
+  startDoorUnlocked: {fileID: 177662, guid: 594b5ca6b17044f4492aa5542ce99bb0, type: 2}
   sceneName: GameMenu
   collect: 0
   moveH: 0
@@ -2037,6 +2037,10 @@ Prefab:
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: startDoorUnlocked
+      value: 
+      objectReference: {fileID: 177662, guid: 594b5ca6b17044f4492aa5542ce99bb0, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 131156}
