@@ -3,17 +3,20 @@ using System.Collections;
 
 public class SawbladeBehavior : MonoBehaviour
 {
+    public int sawbladeDamage;
     public float rotationSpeed = 100.0f;
     public bool reverseRotation = false;
 
     private GameObject player;
     private TrackMovement trackScript;
+    private EventManager eventManager;
 
     // Use this for initialization
     void Start()
     {
         trackScript = GetComponent<TrackMovement>();
         player = GameObject.FindGameObjectWithTag("Player");
+        eventManager = GameObject.FindGameObjectWithTag("EventManager").GetComponent<EventManager>();
     }
 
     // Update is called once per frame
@@ -38,6 +41,14 @@ public class SawbladeBehavior : MonoBehaviour
         else
         {
             return moveDelta.y;
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.tag == "Player")
+        {
+            eventManager.PlayerHit(sawbladeDamage);
         }
     }
 }

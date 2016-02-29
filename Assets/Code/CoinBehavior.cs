@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ShruikenBehavior : MonoBehaviour {
-
-    public int shruikenDamage;
+public class CoinBehavior : MonoBehaviour {
 
     private EventManager eventManager;
 
@@ -13,13 +11,12 @@ public class ShruikenBehavior : MonoBehaviour {
         eventManager = GameObject.FindGameObjectWithTag("EventManager").GetComponent<EventManager>();
     }
 
-    void OnTriggerEnter2D (Collider2D other) 
+    void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.tag == "Player")
         {
-            eventManager.PlayerHit(shruikenDamage);
+            eventManager.CollectCoin();
+            Destroy(gameObject);
         }
-
-        Destroy(gameObject); // Doesn't matter what it hits -- gets destroyed anyway
     }
 }

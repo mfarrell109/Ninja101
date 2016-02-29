@@ -14,7 +14,7 @@ GameObject:
   - 114: {fileID: 11411950}
   m_Layer: 0
   m_Name: Shruiken
-  m_TagString: Death
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -73,6 +73,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87f7e5aa93f47e04dbf4cb0732307e4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shruikenDamage: 33
 --- !u!212 &21248648
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -121,6 +122,14 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_GravityScale
       value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: shruikenDamage
+      value: 33
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
