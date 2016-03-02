@@ -13,7 +13,7 @@ GameObject:
   - 50: {fileID: 5088214}
   - 114: {fileID: 11411950}
   m_Layer: 0
-  m_Name: Shruiken
+  m_Name: Shuriken
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -73,7 +73,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87f7e5aa93f47e04dbf4cb0732307e4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shruikenDamage: 33
+  shurikenDamage: 33
 --- !u!212 &21248648
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -124,7 +124,7 @@ Prefab:
       value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 0}
-      propertyPath: shruikenDamage
+      propertyPath: shurikenDamage
       value: 33
       objectReference: {fileID: 0}
     - target: {fileID: 0}
