@@ -899,7 +899,7 @@ MonoBehaviour:
   rightMouse: {fileID: 11494574}
   animController: {fileID: 9533152}
   startDoorUnlocked: {fileID: 0}
-  sceneName: GameMenu
+  sceneName: LevelSelect
   collect: 0
   moveH: 0
   jumpForce: 900
@@ -1994,6 +1994,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_LocalPosition.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: sceneName
+      value: LevelSelect
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

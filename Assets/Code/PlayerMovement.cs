@@ -165,7 +165,7 @@ public class PlayerMovement : MonoBehaviour
         /* If player dies and has not lives. Go back to main menu */
         if (livesCounter <= 0)
         {
-            Application.LoadLevel("GameMenu");
+            Application.LoadLevel("LevelSelect");
         }
     }
 
@@ -241,7 +241,7 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             print("Escape pressed");
-            Application.LoadLevel("GameMenu");
+            Application.LoadLevel("LevelSelect");
         }
 
         if (moveRight == true && !faceRight)
@@ -258,7 +258,7 @@ public class PlayerMovement : MonoBehaviour
 
     IEnumerator DoorTimer()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
         myRigidBody.gameObject.active = false;
         SceneChange(sceneName);
     }

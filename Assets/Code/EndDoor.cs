@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EndDoor : MonoBehaviour {
- 
+public class EndDoor : MonoBehaviour
+{
     public Rigidbody2D door;
     public float doorForce = 0.1f;
-    public float doorOpenPosition = 0;
+    public float doorOpenPosition = 2.4f;
     public float doorClosePosition = 0;
     // Use this for initialization
     bool move = false;
@@ -15,7 +15,7 @@ public class EndDoor : MonoBehaviour {
         yield return new WaitForSeconds(1);
         //-0.14
         doorForce = -0.1f;
-        if (door.transform.position.x < doorClosePosition)
+        if (door.transform.localPosition.x < doorClosePosition)
         {
             doorForce = 0;
         }
@@ -24,18 +24,16 @@ public class EndDoor : MonoBehaviour {
     void Start()
     {
         door = GetComponent<Rigidbody2D>();
-
     }
-
-
 
     // Update is called once per frame
     void Update()
     {
-    if (move == true) {
+        if (move == true)
+        {
             door.transform.Translate(doorForce, 0, 0);
 
-            if (door.transform.position.x > doorOpenPosition)
+            if (door.transform.localPosition.x > doorOpenPosition)
             {
                 doorForce = 0;
             }
@@ -50,7 +48,5 @@ public class EndDoor : MonoBehaviour {
         {
             move = true;
         }
-        
     }
 }
-

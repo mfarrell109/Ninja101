@@ -5,7 +5,7 @@ public class BeginDoor : MonoBehaviour
 {
     Rigidbody2D door;
     public float doorForce = 0.1f;
-    public float doorOpenPosition = 0;
+    public float doorOpenPosition = 2.4f;
     public float doorClosePosition = 0;
 
     public delegate void StartDoorOpened();
@@ -18,12 +18,12 @@ public class BeginDoor : MonoBehaviour
         yield return new WaitForSeconds(1);
 
         doorForce = -0.1f;
-        if (door.transform.position.x <= doorClosePosition)
+        if (door.transform.localPosition.x <= doorClosePosition)
         {
             doorForce = 0;
-            Vector3 newPosition = door.transform.position;
+            Vector3 newPosition = door.transform.localPosition;
             newPosition.x = doorClosePosition;
-            door.transform.position = newPosition;
+            door.transform.localPosition = newPosition;
 
             if (startDoorClosed != null)
             {
@@ -42,12 +42,12 @@ public class BeginDoor : MonoBehaviour
     {
         door.transform.Translate(Vector3.right * doorForce);
 
-        if (door.transform.position.x > doorOpenPosition)
+        if (door.transform.localPosition.x > doorOpenPosition)
         {
             doorForce = 0;
-            Vector3 newPosition = door.transform.position;
+            Vector3 newPosition = door.transform.localPosition;
             newPosition.x = doorOpenPosition;
-            door.transform.position = newPosition;
+            door.transform.localPosition = newPosition;
             if (startDoorOpened != null)
             {
                 startDoorOpened();
