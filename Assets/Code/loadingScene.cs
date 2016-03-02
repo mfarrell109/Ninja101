@@ -2,8 +2,6 @@
 using System.Collections;
 
 public class loadingScene : MonoBehaviour {
-
-
     public string sceneName;
     public static float counter = 0;
     public GUIStyle guiStyle;
@@ -11,13 +9,14 @@ public class loadingScene : MonoBehaviour {
     private AsyncOperation async;
     public float pc, hobar = 0;
     public Texture2D progressBar;
+
     void Start()
     {
-        
+
     }
+
     void Update()
     {
-   
         if (async != null)
         {
             pc = async.progress * 100;
@@ -27,10 +26,9 @@ public class loadingScene : MonoBehaviour {
 
     public IEnumerator loadAsync(string sceneName)
     {
-
         if (pc >= 90)
         {
-            pc = 100;           
+            pc = 100;
         }
 
         async = Application.LoadLevelAsync(sceneName);
@@ -40,7 +38,7 @@ public class loadingScene : MonoBehaviour {
     void OnGUI()
     {
         //guiStyle.fontSize = 10;
-        GUI.DrawTexture(new Rect(0, Screen.height - 50, hobar, 50), progressBar, ScaleMode.StretchToFill );               
+        GUI.DrawTexture(new Rect(0, Screen.height - 50, hobar, 50), progressBar, ScaleMode.StretchToFill );
     }
 
     //Start game from scratch and reset all variables
@@ -56,7 +54,4 @@ public class loadingScene : MonoBehaviour {
     {
         Application.Quit();
     }
-
-
-
 }
