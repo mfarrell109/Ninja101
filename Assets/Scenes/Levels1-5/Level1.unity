@@ -5298,11 +5298,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11453310, guid: 9a3636c43cab8504584d17fc0b65bf51, type: 2}
       propertyPath: doorClosePosition
-      value: 47
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11453310, guid: 9a3636c43cab8504584d17fc0b65bf51, type: 2}
       propertyPath: doorOpenPosition
-      value: 49.5
+      value: 2.4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 9a3636c43cab8504584d17fc0b65bf51, type: 2}
