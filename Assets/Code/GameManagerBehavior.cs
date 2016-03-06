@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using Facebook.Unity;
+using GameSparks.Api.Requests;
+using GameSparks.Api.Responses;
 using System;
 
 namespace UnityEngine
@@ -132,6 +134,8 @@ public class GameManagerBehavior : MonoBehaviour
             user = new FbNinjaUser(firstName, lastName, Facebook.Unity.AccessToken.CurrentAccessToken);
             GreetUser();
 
+            GameSparksLogin();
+
             Application.LoadLevel("GameMenu");
         }
     }
@@ -142,6 +146,33 @@ public class GameManagerBehavior : MonoBehaviour
         {
             Debug.Log("Welcome, " + user.GetFirstName() + " " + user.GetLastName() + ". You are now authenticated with " + user.GetLoginType().ToString() + ".");
         }
+    }
+
+    private void GameSparksLogin()
+    {
+        if (FB.IsLoggedIn)
+        {
+            new FacebookConnectRequest().SetAccessToken(Facebook.Unity.AccessToken.CurrentAccessToken.TokenString).Send((response) =>
+            {
+                if (response.HasErrors)
+                {
+                    Debug.Log("Something failed when connecting with Facebook: " + response.Errors.JSON);
+                }
+                else
+                {
+                    //Otherwise we are successfully logged in!
+                    Debug.Log("Gamesparks Facebook Login Successful");
+                    //Since we successfully logged in, we can get our account information.
+
+                }
+            });
+        } 
+        // Else if G+ login
+    }
+
+    private void response(AuthenticationResponse obj)
+    {
+        throw new NotImplementedException();
     }
 
     // TODO: Pulled from FB SDK example. Do we actually need this?
