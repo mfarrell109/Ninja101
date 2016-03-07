@@ -1,10 +1,8 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using Facebook.Unity;
 using GameSparks.Api.Requests;
 using GameSparks.Core;
-using GameSparks.Platforms;
 using System;
 
 namespace UnityEngine
@@ -23,7 +21,7 @@ namespace UnityEngine
         // TODO Texture GetProfilePicture();
     }
 
-    public struct FbNinjaUser : NinjaUser
+    public class FbNinjaUser : NinjaUser
     {
         private string firstName;
         private string lastName;
@@ -80,6 +78,10 @@ public class GameManagerBehavior : MonoBehaviour
     public NinjaUser user;
 
 
+    // /////////////////////
+    // /  PUBLIC METHODS  //
+    // /////////////////////
+
     void Awake()
     {
         DontDestroyOnLoad(this);
@@ -87,28 +89,7 @@ public class GameManagerBehavior : MonoBehaviour
         // Initialize FB to see if there's a valid session
         if (!FB.IsInitialized)
         {
-            FB.Init(() =>
-            {
-                if (FB.IsInitialized && FB.IsLoggedIn) // There's a valid session!
-                {
-                    if (Application.isMobilePlatform)
-                    {
-                        FB.ActivateApp();
-                    }
-                    Debug.Log("Found valid FB Session. Re-using.");
-                    CachedUser cUser = GetCachedUser();
-                    if (cUser.loginType == UserLoginType.Facebook && cUser.cachedId == Facebook.Unity.AccessToken.CurrentAccessToken.UserId)
-                    {
-                        SetUser(cUser.firstName, cUser.lastName, UserLoginType.Facebook, Facebook.Unity.AccessToken.CurrentAccessToken.UserId);
-                        OnSocialMediaLogin();
-                    }
-                    else // attempt to get correct details for FB session
-                    {
-                        FbInitCallback();
-                    }
-                }
-            },
-            OnHideUnity);
+            OnAwakeFacebook();
         }
     }
     
@@ -121,14 +102,7 @@ public class GameManagerBehavior : MonoBehaviour
     {
 	
 	}
-
-    private void OnSocialMediaLogin()
-    {
-        GreetUser();
-        GameSparksLogin();
-        Application.LoadLevel("GameMenu");
-    }
-
+    
     // Call this method to initiate FB login and to query user for permission
     public void FacebookLogin()
     {
@@ -142,7 +116,97 @@ public class GameManagerBehavior : MonoBehaviour
         }
     }
 
-    // This is called after the FB SDK has been initialized
+    public void GameSparksLogin()
+    {
+        if (!GS.Available) // Attempt to return GameSparks to an available state. For some reason GS hangs on connecting occassionally.
+        {
+            Debug.Log("The GameSparks service is unavailable. Attempting to reset.");
+            GS.Reset();
+        }
+
+        if (FB.IsLoggedIn && !GS.Authenticated)
+        {
+            new FacebookConnectRequest().SetAccessToken(Facebook.Unity.AccessToken.CurrentAccessToken.TokenString).Send((response) =>
+            {
+                if (response.HasErrors)
+                {
+                    Debug.Log("Something failed when connecting to GameSparks with Facebook: " + response.Errors.JSON);
+                }
+                else
+                {
+                    //Otherwise we are successfully logged in!
+                    Debug.Log("Gamesparks Facebook Login Successful. " + response.DisplayName);
+                    //Since we successfully logged in, we can get our account information.
+
+                }
+            });
+        }
+        else if (FB.IsLoggedIn && GS.Authenticated)
+        {
+            Debug.Log("Detected cached GameSparks session ID " + GS.GSPlatform.UserId + ". No need for re-authentication.");
+        }
+        // Else if G+ login
+    }
+
+
+    // /////////////////////
+    // /  PRIVATE EVENTS  //
+    // /////////////////////
+
+    private void OnAwakeFacebook()
+    {
+        FB.Init(() =>
+        {
+            if (FB.IsInitialized && FB.IsLoggedIn) // There's a valid session!
+            {
+                if (Application.isMobilePlatform)
+                {
+                    FB.ActivateApp();
+                }
+                Debug.Log("Found valid FB Session. Re-using.");
+
+                CachedUser cUser = GetCachedUser();
+                if (cUser != null && cUser.loginType == UserLoginType.Facebook 
+                && cUser.cachedId == Facebook.Unity.AccessToken.CurrentAccessToken.UserId)
+                {
+                    SetUser(cUser.firstName, cUser.lastName, UserLoginType.Facebook, Facebook.Unity.AccessToken.CurrentAccessToken.UserId);
+                    OnSocialMediaLogin();
+                }
+                else // attempt to get correct details for FB session since either no saved user, wrong login type, or wrong FB user
+                {
+                    FbInitCallback();
+                }
+            }
+        },
+            OnHideUnity);
+    }
+
+    private void OnSocialMediaLogin()
+    {
+        GreetUser();
+        GameSparksLogin();
+        Application.LoadLevel("GameMenu");
+    }
+
+    // Pauses the game in the background while FB is being authorized
+    private void OnHideUnity(bool isGameShown)
+    {
+        if (!isGameShown)
+        {
+            Time.timeScale = 0;
+        }
+        else
+        {
+            Time.timeScale = 1;
+        }
+    }
+
+
+    // ///////////////////////////
+    // /  PRIVATE FB CALLBACKS  //
+    // ///////////////////////////
+
+    // This is called after the FB SDK has been initialized via the FB login button
     private void FbInitCallback()
     {
         if (FB.IsInitialized)
@@ -192,44 +256,17 @@ public class GameManagerBehavior : MonoBehaviour
         }
     }
 
+
+    // ////////////////////////////////////////////
+    // /  PRIVATE, SERVICE-INDEPENDENT METHODS  //
+    // ////////////////////////////////////////////
+
     private void GreetUser()
     {
         if (user != null)
         {
             Debug.Log("Welcome, " + user.GetFirstName() + " " + user.GetLastName() + ". You are now authenticated with " + user.GetLoginType().ToString() + ".");
         }
-    }
-
-    private void GameSparksLogin()
-    {
-        if (!GS.Available) // Attempt to return GameSparks to an available state. For some reason GS hangs on connecting occassionally.
-        {
-            Debug.Log("The GameSparks service is unavailable. Attempting to reset.");
-            GS.Reset();
-        }
-
-        if (FB.IsLoggedIn && !GS.Authenticated)
-        {
-            new FacebookConnectRequest().SetAccessToken(Facebook.Unity.AccessToken.CurrentAccessToken.TokenString).Send((response) =>
-            {
-                if (response.HasErrors)
-                {
-                    Debug.Log("Something failed when connecting to GameSparks with Facebook: " + response.Errors.JSON);
-                }
-                else
-                {
-                    //Otherwise we are successfully logged in!
-                    Debug.Log("Gamesparks Facebook Login Successful. " + response.DisplayName);
-                    //Since we successfully logged in, we can get our account information.
-
-                }
-            });
-        }
-        else if (FB.IsLoggedIn && GS.Authenticated)
-        {
-            Debug.Log("Detected cached GameSparks session ID " + GS.GSPlatform.UserId + ". No need for re-authentication.");
-        }
-        // Else if G+ login
     }
 
     // Retrieves the last logged on user from the cache
@@ -252,6 +289,7 @@ public class GameManagerBehavior : MonoBehaviour
         return cachedUser;
     }
 
+    // Saves the user to PlayerPrefs, then builds a new current user
     private void SetUser(string firstName, string lastName, UserLoginType loginType, string userId)
     {
         PlayerPrefs.SetString(UserPrefKeys.FIRST_NAME, firstName);
@@ -272,18 +310,5 @@ public class GameManagerBehavior : MonoBehaviour
             }
         }
         // else if G+
-    }
-
-    // Pauses the game in the background while FB is being authorized
-    private void OnHideUnity (bool isGameShown)
-    {
-        if (!isGameShown)
-        {
-            Time.timeScale = 0;
-        }
-        else
-        {
-            Time.timeScale = 1;
-        }
     }
 }
