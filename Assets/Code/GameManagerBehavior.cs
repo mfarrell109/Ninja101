@@ -1,11 +1,8 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
 using System.Collections.Generic;
 using Facebook.Unity;
 using GameSparks.Api.Requests;
 using GameSparks.Core;
-using System;
 
 namespace UnityEngine
 {
@@ -14,15 +11,16 @@ namespace UnityEngine
         Facebook,
         GooglePlus
     }
-
-    
 }
 
 public class GameManagerBehavior : MonoBehaviour
 {
-    
+
     public NinjaUser user;
     public float signInTimeout = 30f;
+
+    private bool profileLoaded = false;
+    private bool checkProfile = false;
 
     // /////////////////////
     // /  PUBLIC METHODS  //
@@ -38,17 +36,24 @@ public class GameManagerBehavior : MonoBehaviour
             OnAwakeFacebook();
         }
     }
-    
-	void Start()
+
+    void Start()
     {
 
     }
-	
-	void Update()
+
+    void Update()
     {
-	
-	}
-    
+        if (profileLoaded)
+        {
+            LoadNextLevel();
+        }
+        else if (checkProfile)
+        {
+            WaitForSignIn();
+        }
+    }
+
     // Call this method to initiate FB login and to query user for permission
     public void FacebookLogin()
     {
@@ -112,7 +117,7 @@ public class GameManagerBehavior : MonoBehaviour
                 Debug.Log("Found valid FB Session. Re-using.");
 
                 CachedUser cUser = NinjaUser.LoadCachedUser();
-                if (cUser != null && cUser.loginType == UserLoginType.Facebook 
+                if (cUser != null && cUser.loginType == UserLoginType.Facebook
                 && cUser.userId == Facebook.Unity.AccessToken.CurrentAccessToken.UserId)
                 {
                     SetUser(new FbNinjaUser(cUser, Facebook.Unity.AccessToken.CurrentAccessToken));
@@ -136,11 +141,11 @@ public class GameManagerBehavior : MonoBehaviour
         if (user == null || user.GetFirstName() == null || user.GetProfilePicture() == null)
         {
             Debug.Log("User not ready. Waiting for profile information before continuing.");
-            StartCoroutine(WaitForSignIn(signInTimeout));
+            checkProfile = true;
         }
         else
         {
-            Application.LoadLevel("GameMenu");
+            LoadNextLevel();
         }
     }
 
@@ -171,7 +176,7 @@ public class GameManagerBehavior : MonoBehaviour
             {
                 FB.ActivateApp();
             }
-            var permissions = new List<string>() {"public_profile", "user_friends"};
+            var permissions = new List<string>() { "public_profile", "user_friends" };
             Debug.Log("Logging in with Facebook...");
             FB.LogInWithReadPermissions(permissions, FbAuthCallback);
         }
@@ -255,31 +260,26 @@ public class GameManagerBehavior : MonoBehaviour
     private float startTime = 0f;
     private float timeoutTime = 0f;
 
-    private IEnumerator WaitForSignIn(float timeout)
+    // Once checkProfile flag is set, this checks during Update() for all profile information to be loaded before continuing
+    private void WaitForSignIn()
     {
-        // TODO: Use something better then Unity Coroutines... Stackoverflow, eugh
         if (startTime == 0f)
         {
             startTime = Time.fixedTime;
-            timeoutTime = startTime + timeout;
+            timeoutTime = startTime + signInTimeout;
         }
 
         if (Time.fixedTime > timeoutTime)
         {
-            Debug.LogError("Error: Social media logon has timed out after " + timeout + "s.");
-            yield return null;
+            Debug.LogError("Error: Social media logon has timed out after " + signInTimeout + "s.");
+            checkProfile = false;
         }
         // Check for valid user before loading next level
         else if (user != null && user.GetFirstName() != null && user.GetProfilePicture() != null)
         {
             Debug.Log("All information collected for user.");
-            Application.LoadLevel("GameMenu");
-            yield return null;
-        } 
-        else
-        {
-            yield return new WaitForFixedUpdate();
-            StartCoroutine(WaitForSignIn(timeout));
+            profileLoaded = true;
+            checkProfile = false;
         }
     }
 
@@ -296,5 +296,10 @@ public class GameManagerBehavior : MonoBehaviour
     {
         user = newUser;
         user.Save();
+    }
+
+    private void LoadNextLevel()
+    {
+        Application.LoadLevel("GameMenu");
     }
 }
