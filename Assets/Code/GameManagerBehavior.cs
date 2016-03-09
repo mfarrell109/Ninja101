@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
+using System.Collections;
 using System.Collections.Generic;
 using Facebook.Unity;
 using GameSparks.Api.Requests;
@@ -15,10 +17,12 @@ namespace UnityEngine
 
     public interface NinjaUser
     {
+        void SetName(string first, string last);
+        void SetProfilePicture(Sprite sprite);
         string GetFirstName();
         string GetLastName();
         UserLoginType GetLoginType();
-        // TODO Texture GetProfilePicture();
+        Sprite GetProfilePicture();
     }
 
     public class FbNinjaUser : NinjaUser
@@ -26,12 +30,32 @@ namespace UnityEngine
         private string firstName;
         private string lastName;
         private AccessToken accessToken;
+        private Sprite picture;
 
-        public FbNinjaUser(string first, string last, AccessToken token)
+        public FbNinjaUser(string first, string last, Sprite picture, AccessToken token)
         {
             firstName = first;
             lastName = last;
             accessToken = token;
+        }
+
+        public FbNinjaUser(string first, string last, AccessToken token) : this(first, last, null, token)
+        {
+        }
+
+        public FbNinjaUser(Sprite picture, AccessToken token) : this(null, null, picture, token)
+        {
+        }
+
+        void NinjaUser.SetName(string first, string last)
+        {
+            this.firstName = first;
+            this.lastName = last;
+        }
+
+        void NinjaUser.SetProfilePicture(Sprite sprite)
+        {
+            this.picture = sprite;
         }
 
         string NinjaUser.GetFirstName()
@@ -52,6 +76,11 @@ namespace UnityEngine
         public AccessToken GetFbAccessToken()
         {
             return accessToken;
+        }
+
+        Sprite NinjaUser.GetProfilePicture()
+        {
+            return picture;
         }
     }
 }
@@ -76,7 +105,7 @@ public class GameManagerBehavior : MonoBehaviour
     }
     
     public NinjaUser user;
-
+    public float signInTimeout = 30f;
 
     // /////////////////////
     // /  PUBLIC METHODS  //
@@ -185,7 +214,17 @@ public class GameManagerBehavior : MonoBehaviour
     {
         GreetUser();
         GameSparksLogin();
-        Application.LoadLevel("GameMenu");
+
+        // Ensure valid user exists before loading main menu
+        if (user == null || user.GetFirstName() == null || user.GetProfilePicture() == null)
+        {
+            Debug.Log("User not ready. Waiting for profile information before continuing.");
+            StartCoroutine(WaitForSignIn(signInTimeout));
+        }
+        else
+        {
+            Application.LoadLevel("GameMenu");
+        }
     }
 
     // Pauses the game in the background while FB is being authorized
@@ -230,6 +269,7 @@ public class GameManagerBehavior : MonoBehaviour
     {
         if (FB.IsLoggedIn)
         {
+            // Get first and last name
             FB.API("/me?fields=first_name,last_name", Facebook.Unity.HttpMethod.GET, (getResult) =>
             {
                 if (getResult.Error != null)
@@ -245,8 +285,43 @@ public class GameManagerBehavior : MonoBehaviour
                 {
                     string firstName = getResult.ResultDictionary["first_name"].ToString();
                     string lastName = getResult.ResultDictionary["last_name"].ToString();
-                    user = new FbNinjaUser(firstName, lastName, Facebook.Unity.AccessToken.CurrentAccessToken);
+                    if (user != null && user.GetLoginType() == UserLoginType.Facebook)
+                    {
+                        Debug.Log("Setting name for user");
+                        user.SetName(firstName, lastName);
+                    }
+                    // TODO else if G+ login detected
+                    else
+                    {
+                        Debug.Log("Creating user with name");
+                        user = new FbNinjaUser(firstName, lastName, Facebook.Unity.AccessToken.CurrentAccessToken);
+                    }
                     OnSocialMediaLogin();
+                }
+            });
+
+            // Get profile picture
+            FB.API("/me/picture?type=normal", Facebook.Unity.HttpMethod.GET, (picResult) =>
+            {
+                if (picResult.Error != null)
+                {
+                    Debug.LogError("FB Error: " + picResult.Error);
+                }
+                else
+                {
+                    Sprite picture = Sprite.Create(picResult.Texture, new Rect(0, 0, 100, 100), new Vector2());
+
+                    if (user != null && user.GetLoginType() == UserLoginType.Facebook)
+                    {
+                        user.SetProfilePicture(picture);
+                        Debug.Log("Set picture");
+                    }
+                    // TODO else if G+ login detected
+                    else
+                    {
+                        Debug.Log("Creating user with picture");
+                        user = new FbNinjaUser(picture, Facebook.Unity.AccessToken.CurrentAccessToken);
+                    }
                 }
             });
         }
@@ -260,6 +335,36 @@ public class GameManagerBehavior : MonoBehaviour
     // ////////////////////////////////////////////
     // /  PRIVATE, SERVICE-INDEPENDENT METHODS  //
     // ////////////////////////////////////////////
+    private float startTime = 0f;
+    private float timeoutTime = 0f;
+
+    private IEnumerator WaitForSignIn(float timeout)
+    {
+        // TODO: Use something better then Unity Coroutines... Stackoverflow, eugh
+        if (startTime == 0f)
+        {
+            startTime = Time.fixedTime;
+            timeoutTime = startTime + timeout;
+        }
+
+        if (Time.fixedTime > timeoutTime)
+        {
+            Debug.LogError("Error: Social media logon has timed out after " + timeout + "s.");
+            yield return null;
+        }
+        // Check for valid user before loading next level
+        else if (user != null && user.GetFirstName() != null && user.GetProfilePicture() != null)
+        {
+            Debug.Log("All information collected for user.");
+            Application.LoadLevel("GameMenu");
+            yield return null;
+        } 
+        else
+        {
+            yield return new WaitForFixedUpdate();
+            StartCoroutine(WaitForSignIn(timeout));
+        }
+    }
 
     private void GreetUser()
     {

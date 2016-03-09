@@ -813,6 +813,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe247f70f9cda8b4195b0f43a6c13cb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  signInTimeout: 30
 --- !u!4 &1140981364
 Transform:
   m_ObjectHideFlags: 0
