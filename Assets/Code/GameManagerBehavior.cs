@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using Facebook.Unity;
 using GameSparks.Api.Requests;
@@ -44,13 +45,15 @@ public class GameManagerBehavior : MonoBehaviour
 
     void Update()
     {
-        if (profileLoaded)
-        {
-            LoadNextLevel();
-        }
-        else if (checkProfile)
+        if (checkProfile)
         {
             WaitForSignIn();
+
+            if (profileLoaded)
+            {
+                checkProfile = false;
+                LoadGameMenu();
+            }
         }
     }
 
@@ -145,7 +148,7 @@ public class GameManagerBehavior : MonoBehaviour
         }
         else
         {
-            LoadNextLevel();
+            LoadGameMenu();
         }
     }
 
@@ -279,7 +282,6 @@ public class GameManagerBehavior : MonoBehaviour
         {
             Debug.Log("All information collected for user.");
             profileLoaded = true;
-            checkProfile = false;
         }
     }
 
@@ -298,7 +300,7 @@ public class GameManagerBehavior : MonoBehaviour
         user.Save();
     }
 
-    private void LoadNextLevel()
+    private void LoadGameMenu()
     {
         Application.LoadLevel("GameMenu");
     }
