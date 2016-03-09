@@ -15,94 +15,11 @@ namespace UnityEngine
         GooglePlus
     }
 
-    public interface NinjaUser
-    {
-        void SetName(string first, string last);
-        void SetProfilePicture(Sprite sprite);
-        string GetFirstName();
-        string GetLastName();
-        UserLoginType GetLoginType();
-        Sprite GetProfilePicture();
-    }
-
-    public class FbNinjaUser : NinjaUser
-    {
-        private string firstName;
-        private string lastName;
-        private AccessToken accessToken;
-        private Sprite picture;
-
-        public FbNinjaUser(string first, string last, Sprite picture, AccessToken token)
-        {
-            firstName = first;
-            lastName = last;
-            accessToken = token;
-        }
-
-        public FbNinjaUser(string first, string last, AccessToken token) : this(first, last, null, token)
-        {
-        }
-
-        public FbNinjaUser(Sprite picture, AccessToken token) : this(null, null, picture, token)
-        {
-        }
-
-        void NinjaUser.SetName(string first, string last)
-        {
-            this.firstName = first;
-            this.lastName = last;
-        }
-
-        void NinjaUser.SetProfilePicture(Sprite sprite)
-        {
-            this.picture = sprite;
-        }
-
-        string NinjaUser.GetFirstName()
-        {
-           return firstName;
-        }
-
-        string NinjaUser.GetLastName()
-        {
-            return lastName;
-        }
-
-        UserLoginType NinjaUser.GetLoginType()
-        {
-            return UserLoginType.Facebook;
-        }
-
-        public AccessToken GetFbAccessToken()
-        {
-            return accessToken;
-        }
-
-        Sprite NinjaUser.GetProfilePicture()
-        {
-            return picture;
-        }
-    }
+    
 }
 
 public class GameManagerBehavior : MonoBehaviour
 {
-    public static class UserPrefKeys
-    {
-        public const string USER_ID = "UserId";
-        public const string FIRST_NAME = "FirstName";
-        public const string LAST_NAME = "LastName";
-        public const string LOGIN_TYPE = "LoginType";
-        public const string CACHED_ID = "CachedId";
-    }
-
-    private class CachedUser
-    {
-        public string firstName;
-        public string lastName;
-        public UserLoginType loginType;
-        public string cachedId;
-    }
     
     public NinjaUser user;
     public float signInTimeout = 30f;
@@ -194,11 +111,11 @@ public class GameManagerBehavior : MonoBehaviour
                 }
                 Debug.Log("Found valid FB Session. Re-using.");
 
-                CachedUser cUser = GetCachedUser();
+                CachedUser cUser = NinjaUser.LoadCachedUser();
                 if (cUser != null && cUser.loginType == UserLoginType.Facebook 
-                && cUser.cachedId == Facebook.Unity.AccessToken.CurrentAccessToken.UserId)
+                && cUser.userId == Facebook.Unity.AccessToken.CurrentAccessToken.UserId)
                 {
-                    SetUser(cUser.firstName, cUser.lastName, UserLoginType.Facebook, Facebook.Unity.AccessToken.CurrentAccessToken.UserId);
+                    SetUser(new FbNinjaUser(cUser, Facebook.Unity.AccessToken.CurrentAccessToken));
                     OnSocialMediaLogin();
                 }
                 else // attempt to get correct details for FB session since either no saved user, wrong login type, or wrong FB user
@@ -294,7 +211,7 @@ public class GameManagerBehavior : MonoBehaviour
                     else
                     {
                         Debug.Log("Creating user with name");
-                        user = new FbNinjaUser(firstName, lastName, Facebook.Unity.AccessToken.CurrentAccessToken);
+                        SetUser(new FbNinjaUser(firstName, lastName, Facebook.Unity.AccessToken.CurrentAccessToken));
                     }
                     OnSocialMediaLogin();
                 }
@@ -309,7 +226,7 @@ public class GameManagerBehavior : MonoBehaviour
                 }
                 else
                 {
-                    Sprite picture = Sprite.Create(picResult.Texture, new Rect(0, 0, 100, 100), new Vector2());
+                    Sprite picture = Sprite.Create(picResult.Texture, new Rect(0, 0, NinjaUser.PICTURE_SIZE, NinjaUser.PICTURE_SIZE), new Vector2());
 
                     if (user != null && user.GetLoginType() == UserLoginType.Facebook)
                     {
@@ -320,7 +237,7 @@ public class GameManagerBehavior : MonoBehaviour
                     else
                     {
                         Debug.Log("Creating user with picture");
-                        user = new FbNinjaUser(picture, Facebook.Unity.AccessToken.CurrentAccessToken);
+                        SetUser(new FbNinjaUser(picture, Facebook.Unity.AccessToken.CurrentAccessToken));
                     }
                 }
             });
@@ -374,46 +291,10 @@ public class GameManagerBehavior : MonoBehaviour
         }
     }
 
-    // Retrieves the last logged on user from the cache
-    // Returns null if there was a problem
-    private CachedUser GetCachedUser()
+    // Switches to a new user and caches it
+    private void SetUser(NinjaUser newUser)
     {
-        CachedUser cachedUser = new CachedUser();
-        try
-        {
-            cachedUser.firstName = PlayerPrefs.GetString(UserPrefKeys.FIRST_NAME);
-            cachedUser.lastName = PlayerPrefs.GetString(UserPrefKeys.LAST_NAME);
-            cachedUser.loginType = (UserLoginType)Enum.Parse(typeof(UserLoginType), PlayerPrefs.GetString(UserPrefKeys.LOGIN_TYPE));
-            cachedUser.cachedId = PlayerPrefs.GetString(UserPrefKeys.CACHED_ID);
-        }
-        catch (Exception e)
-        {
-            cachedUser = null;
-        }
-
-        return cachedUser;
-    }
-
-    // Saves the user to PlayerPrefs, then builds a new current user
-    private void SetUser(string firstName, string lastName, UserLoginType loginType, string userId)
-    {
-        PlayerPrefs.SetString(UserPrefKeys.FIRST_NAME, firstName);
-        PlayerPrefs.SetString(UserPrefKeys.LAST_NAME, lastName);
-        PlayerPrefs.SetString(UserPrefKeys.LOGIN_TYPE, loginType.ToString());
-        PlayerPrefs.SetString(UserPrefKeys.CACHED_ID, userId);
-        PlayerPrefs.Save();
-
-        if (loginType == UserLoginType.Facebook)
-        {
-            if (FB.IsLoggedIn)
-            {
-                user = new FbNinjaUser(firstName, lastName, Facebook.Unity.AccessToken.CurrentAccessToken);
-            }
-            else
-            {
-                Debug.Log("Warning: Caching a user to PlayerPrefs that isn't actually logged in at this moment");
-            }
-        }
-        // else if G+
+        user = newUser;
+        user.Save();
     }
 }

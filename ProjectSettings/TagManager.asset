@@ -9,6 +9,9 @@ TagManager:
   - Coins
   - EndDoor
   - EventManager
+  - ProfilePicture
+  - NameText
+  - GameManager
   layers:
   - Default
   - TransparentFX
