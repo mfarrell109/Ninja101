@@ -8,14 +8,18 @@ public class ProfileDisplayBehavior : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        gameManager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManagerBehavior>();
-        SpriteRenderer pictureRenderer = GameObject.FindGameObjectWithTag("ProfilePicture").GetComponent<SpriteRenderer>();
-        Text name = GameObject.FindGameObjectWithTag("NameText").GetComponent<Text>();
-        NinjaUser user = gameManager.user;
-        if (user != null)
+        GameObject gmObject = GameObject.FindGameObjectWithTag("GameManager");
+        if (gmObject != null)
         {
-            pictureRenderer.sprite = user.GetProfilePicture();
-            name.text = user.GetFirstName() + " " + user.GetLastName();
+            gameManager = gmObject.GetComponent<GameManagerBehavior>();
+            SpriteRenderer pictureRenderer = GameObject.FindGameObjectWithTag("ProfilePicture").GetComponent<SpriteRenderer>();
+            Text name = GameObject.FindGameObjectWithTag("NameText").GetComponent<Text>();
+            NinjaUser user = gameManager.loggedInUser;
+            if (user != null)
+            {
+                pictureRenderer.sprite = user.picture;
+                name.text = user.firstName + " " + user.lastName;
+            }
         }
 	}
 	

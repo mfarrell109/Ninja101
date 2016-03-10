@@ -98,7 +98,7 @@ namespace UnityEngine
 
         public override void Save()
         {
-            PlayerPrefs.SetString(UserPrefKeys.FIRST_NAME, );
+            PlayerPrefs.SetString(UserPrefKeys.FIRST_NAME, firstName);
             PlayerPrefs.SetString(UserPrefKeys.LAST_NAME, lastName);
             PlayerPrefs.SetString(UserPrefKeys.LOGIN_TYPE, GetLoginType().ToString());
             PlayerPrefs.SetString(UserPrefKeys.CACHED_ID, accessToken.UserId);

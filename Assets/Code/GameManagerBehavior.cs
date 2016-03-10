@@ -17,7 +17,7 @@ namespace UnityEngine
 public class GameManagerBehavior : MonoBehaviour
 {
 
-    public NinjaUser user;
+    public NinjaUser loggedInUser;
     public float signInTimeout = 30f;
 
     private bool profileLoaded = false;
@@ -102,6 +102,24 @@ public class GameManagerBehavior : MonoBehaviour
         // Else if G+ login
     }
 
+    public void LogOut()
+    {
+        if (loggedInUser != null)
+        {
+            if (loggedInUser.GetLoginType() == UserLoginType.Facebook)
+            {
+                if (FB.IsInitialized && FB.IsLoggedIn)
+                {
+                    FB.LogOut();
+                }
+            }
+            // else if G+
+
+            GS.Disconnect();
+            loggedInUser = null;
+        }
+    }
+
 
     // /////////////////////
     // /  PRIVATE EVENTS  //
@@ -141,7 +159,7 @@ public class GameManagerBehavior : MonoBehaviour
         GameSparksLogin();
 
         // Ensure valid user exists before loading main menu
-        if (user == null || user.firstName == null || user.picture == null)
+        if (loggedInUser == null || loggedInUser.firstName == null || loggedInUser.picture == null)
         {
             Debug.Log("User not ready. Waiting for profile information before continuing.");
             checkProfile = true;
@@ -210,11 +228,11 @@ public class GameManagerBehavior : MonoBehaviour
                 {
                     string firstName = getResult.ResultDictionary["first_name"].ToString();
                     string lastName = getResult.ResultDictionary["last_name"].ToString();
-                    if (user != null && user.GetLoginType() == UserLoginType.Facebook)
+                    if (loggedInUser != null && loggedInUser.GetLoginType() == UserLoginType.Facebook)
                     {
                         Debug.Log("Setting name for user");
-                        user.SetName(firstName, lastName);
-                        user.Save();
+                        loggedInUser.SetName(firstName, lastName);
+                        loggedInUser.Save();
                     }
                     // TODO else if G+ login detected
                     else
@@ -237,11 +255,11 @@ public class GameManagerBehavior : MonoBehaviour
                 {
                     Sprite picture = Sprite.Create(picResult.Texture, new Rect(0, 0, NinjaUser.PICTURE_SIZE, NinjaUser.PICTURE_SIZE), new Vector2());
 
-                    if (user != null && user.GetLoginType() == UserLoginType.Facebook)
+                    if (loggedInUser != null && loggedInUser.GetLoginType() == UserLoginType.Facebook)
                     {
-                        user.picture = picture;
+                        loggedInUser.picture = picture;
                         Debug.Log("Set picture");
-                        user.Save();
+                        loggedInUser.Save();
                     }
                     // TODO else if G+ login detected
                     else
@@ -280,7 +298,7 @@ public class GameManagerBehavior : MonoBehaviour
             checkProfile = false;
         }
         // Check for valid user before loading next level
-        else if (user != null && user.firstName != null && user.lastName != null && user.picture != null)
+        else if (loggedInUser != null && loggedInUser.firstName != null && loggedInUser.lastName != null && loggedInUser.picture != null)
         {
             Debug.Log("All information collected for user.");
             profileLoaded = true;
@@ -289,17 +307,17 @@ public class GameManagerBehavior : MonoBehaviour
 
     private void GreetUser()
     {
-        if (user != null)
+        if (loggedInUser != null)
         {
-            Debug.Log("Welcome, " + user.firstName + " " + user.lastName + ". You are now authenticated with " + user.GetLoginType().ToString() + ".");
+            Debug.Log("Welcome, " + loggedInUser.firstName + " " + loggedInUser.lastName + ". You are now authenticated with " + loggedInUser.GetLoginType().ToString() + ".");
         }
     }
 
     // Switches to a new user and caches it
     private void SetUser(NinjaUser newUser)
     {
-        user = newUser;
-        user.Save();
+        loggedInUser = newUser;
+        loggedInUser.Save();
     }
 
     private void LoadGameMenu()
