@@ -141,7 +141,7 @@ public class GameManagerBehavior : MonoBehaviour
         GameSparksLogin();
 
         // Ensure valid user exists before loading main menu
-        if (user == null || user.GetFirstName() == null || user.GetProfilePicture() == null)
+        if (user == null || user.firstName == null || user.picture == null)
         {
             Debug.Log("User not ready. Waiting for profile information before continuing.");
             checkProfile = true;
@@ -214,6 +214,7 @@ public class GameManagerBehavior : MonoBehaviour
                     {
                         Debug.Log("Setting name for user");
                         user.SetName(firstName, lastName);
+                        user.Save();
                     }
                     // TODO else if G+ login detected
                     else
@@ -238,8 +239,9 @@ public class GameManagerBehavior : MonoBehaviour
 
                     if (user != null && user.GetLoginType() == UserLoginType.Facebook)
                     {
-                        user.SetProfilePicture(picture);
+                        user.picture = picture;
                         Debug.Log("Set picture");
+                        user.Save();
                     }
                     // TODO else if G+ login detected
                     else
@@ -278,7 +280,7 @@ public class GameManagerBehavior : MonoBehaviour
             checkProfile = false;
         }
         // Check for valid user before loading next level
-        else if (user != null && user.GetFirstName() != null && user.GetProfilePicture() != null)
+        else if (user != null && user.firstName != null && user.lastName != null && user.picture != null)
         {
             Debug.Log("All information collected for user.");
             profileLoaded = true;
@@ -289,7 +291,7 @@ public class GameManagerBehavior : MonoBehaviour
     {
         if (user != null)
         {
-            Debug.Log("Welcome, " + user.GetFirstName() + " " + user.GetLastName() + ". You are now authenticated with " + user.GetLoginType().ToString() + ".");
+            Debug.Log("Welcome, " + user.firstName + " " + user.lastName + ". You are now authenticated with " + user.GetLoginType().ToString() + ".");
         }
     }
 

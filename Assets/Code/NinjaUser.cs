@@ -19,9 +19,9 @@ namespace UnityEngine
     {
         public static int PICTURE_SIZE = 100;
 
-        private string firstName;
-        private string lastName;
-        private Sprite picture;
+        public string firstName { get; set; }
+        public string lastName { get; set; }
+        public Sprite picture { get; set; }
 
         public NinjaUser(string first, string last, Sprite picture)
         {
@@ -34,26 +34,6 @@ namespace UnityEngine
         {
             this.firstName = first;
             this.lastName = last;
-        }
-
-        public void SetProfilePicture(Sprite sprite)
-        {
-            this.picture = sprite;
-        }
-
-        public string GetFirstName()
-        {
-            return firstName;
-        }
-
-        public string GetLastName()
-        {
-            return lastName;
-        }
-
-        public Sprite GetProfilePicture()
-        {
-            return picture;
         }
         
         private static Sprite LoadPictureFromCache()
@@ -118,17 +98,17 @@ namespace UnityEngine
 
         public override void Save()
         {
-            PlayerPrefs.SetString(UserPrefKeys.FIRST_NAME, GetFirstName());
-            PlayerPrefs.SetString(UserPrefKeys.LAST_NAME, GetLastName());
+            PlayerPrefs.SetString(UserPrefKeys.FIRST_NAME, );
+            PlayerPrefs.SetString(UserPrefKeys.LAST_NAME, lastName);
             PlayerPrefs.SetString(UserPrefKeys.LOGIN_TYPE, GetLoginType().ToString());
             PlayerPrefs.SetString(UserPrefKeys.CACHED_ID, accessToken.UserId);
             PlayerPrefs.Save();
 
-            if (GetProfilePicture() != null)
+            if (picture != null)
             {
                 File.WriteAllBytes(
                     Path.Combine(Application.persistentDataPath, accessToken.UserId + "_" + UserPrefKeys.PROF_PIC + ".png"),
-                    GetProfilePicture().texture.EncodeToPNG()
+                    picture.texture.EncodeToPNG()
                 );
             }
             else // write empty file to save spot
