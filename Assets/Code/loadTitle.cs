@@ -17,7 +17,6 @@ public class loadTitle : MonoBehaviour
     void Update()
     {
         sec += Time.deltaTime;
-        print(sec.ToString());
         if (sec < 1 && sec >= 0)
         {
             title.transform.position = new Vector3(0, -2, 0);
