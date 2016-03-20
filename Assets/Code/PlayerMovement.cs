@@ -198,45 +198,48 @@ public class PlayerMovement : MonoBehaviour
             animController.SetBool("isSpeeding", false);
             StartCoroutine(DoorTimer());
         }
-
-        /* player is on the ground and keyPress spacebar */
-        if (grounded && Input.GetKeyDown(KeyCode.Space) && !isEndDoorOpen)
+        
+        if (!isDead)//(bug fix) Stop player movement and flip animation when dead
         {
-            jumpAudio.PlayOneShot(clip2, 1f);
-            animController.SetBool("isGrounded", true);
-            myRigidBody.AddForce(new Vector2(0, jumpForce ));
-        }
+            /* player is on the ground and keyPress spacebar */
+            if (grounded && Input.GetKeyDown(KeyCode.Space) && !isEndDoorOpen)
+            {
+                jumpAudio.PlayOneShot(clip2, 1f);
+                animController.SetBool("isGrounded", true);
+                myRigidBody.AddForce(new Vector2(0, jumpForce));
+            }
 
-        /* keyPress "a" or onScreen LeftButton is held down */
-        if (Input.GetKey("a") || leftMouse.buttonHeld2 && !isEndDoorOpen)
-        {
+            /* keyPress "a" or onScreen LeftButton is held down */
+            if (Input.GetKey("a") || leftMouse.buttonHeld2 && !isEndDoorOpen)
+            {
                 moveLeft = true;
                 moveRight = false;
                 animController.SetBool("isSpeeding", true);
                 myRigidBody.transform.Translate((moveH - 1) * Time.deltaTime * speed, 0, 0);
-        }
+            }
 
-        /* keyPress "a" not held or onScreen LeftButton is not held */
-        if (Input.GetKeyUp("a") || !leftMouse && !isEndDoorOpen )
-        {
-            animController.SetBool("isSpeeding", false);
-        }
+            /* keyPress "a" not held or onScreen LeftButton is not held */
+            if (Input.GetKeyUp("a") || !leftMouse && !isEndDoorOpen)
+            {
+                animController.SetBool("isSpeeding", false);
+            }
 
-        /* KeyPress "d" is held or onScreen RightButton is held */
-        if (Input.GetKey("d")  || rightMouse.buttonHeld  && !isEndDoorOpen)
-        {
+            /* KeyPress "d" is held or onScreen RightButton is held */
+            if (Input.GetKey("d") || rightMouse.buttonHeld && !isEndDoorOpen)
+            {
                 moveLeft = false;
                 moveRight = true;
                 animController.SetBool("isSpeeding", true);
                 myRigidBody.transform.Translate((moveH + 1) * Time.deltaTime * speed, 0, 0);
-        }
+            }
 
-        /* KeyPress "d" is not held or onScreen RightButton is not held */
-        if (Input.GetKeyUp("d") || !rightMouse && !isEndDoorOpen)
-        {
-            animController.SetBool("isSpeeding", false);
+            /* KeyPress "d" is not held or onScreen RightButton is not held */
+            if (Input.GetKeyUp("d") || !rightMouse && !isEndDoorOpen)
+            {
+                animController.SetBool("isSpeeding", false);
+            }
         }
-
+        
         /* Pressing escape or back key on android */
         if (Input.GetKeyDown(KeyCode.Escape))
         {
