@@ -1,0 +1,13 @@
+#!/bin/sh
+git diff -z --cached --name-only --diff-filter=ACM |
+while read -r -d $'\0' file; do
+	if [[ $file == *.cs ]]; then
+		temp=$file"_temp"
+		echo "Fixing tabs..." $file
+		expand --tabs=4 --initial $file>$temp
+		# Overwrite original file with modified temp
+		mv $temp $file		
+		# We've potentially modified this file, so we'll need to restage it.
+		git stage $file
+	fi
+done
