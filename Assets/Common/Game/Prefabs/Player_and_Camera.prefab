@@ -70,7 +70,7 @@ GameObject:
   m_Layer: 9
   m_Name: ScoreText
   m_TagString: Untagged
-  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -140,7 +140,7 @@ GameObject:
   m_Layer: 9
   m_Name: groundCheck
   m_TagString: Untagged
-  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -158,7 +158,7 @@ GameObject:
   m_Layer: 9
   m_Name: TimerText
   m_TagString: Untagged
-  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -301,7 +301,7 @@ GameObject:
   m_Layer: 9
   m_Name: Lives
   m_TagString: Untagged
-  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -329,7 +329,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 163014}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1}
+  m_LocalPosition: {x: -0.02, y: -6.17, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 427572}
@@ -1779,8 +1779,8 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0.00038146996, y: -0.6125066}
+  m_SizeDelta: {x: -126.67, y: -6.8704}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &22405968
 RectTransform:
@@ -1813,8 +1813,8 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0.0004119873, y: 0.000015019999}
+  m_SizeDelta: {x: -126.67, y: -7.7778}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &22439518
 RectTransform:
@@ -1924,8 +1924,8 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0.00041198998, y: 0.000006556511}
+  m_SizeDelta: {x: -126.67, y: -7.7778}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &22461234
 RectTransform:
@@ -1959,8 +1959,8 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -0.00035095215, y: 0.000015019999}
+  m_SizeDelta: {x: -126.67, y: -7.7778}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &22484466
 RectTransform:

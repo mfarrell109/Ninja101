@@ -668,16 +668,12 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 412210, guid: 829017beb12fd7f4aaecb8ee8cc15e53, type: 2}
       propertyPath: m_RootOrder
-      value: 16
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 11412446, guid: 829017beb12fd7f4aaecb8ee8cc15e53, type: 2}
       propertyPath: startDoorUnlocked
       value: 
       objectReference: {fileID: 1159025115}
-    - target: {fileID: 163014, guid: 829017beb12fd7f4aaecb8ee8cc15e53, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 829017beb12fd7f4aaecb8ee8cc15e53, type: 2}
   m_IsPrefabParent: 0
